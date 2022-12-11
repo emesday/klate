@@ -9,36 +9,32 @@ import io.ktor.server.application.*
 import io.ktor.server.freemarker.*
 import io.ktor.util.*
 
-class Klate(
-    val application: Application,
-    val securityManager: BaseSecurityManager,
-    val indexView: BaseView
-) {
+val securityManagerKey = AttributeKey<BaseSecurityManager>("securityManager")
 
-    val baseViews: MutableList<BaseView> = mutableListOf()
+val indexViewKey = AttributeKey<BaseView>("indexView")
 
-    companion object Plugin : BaseApplicationPlugin<Application, KlateConfig, Klate> {
+val baseViewsKey = AttributeKey<MutableList<BaseView>>("baseViews")
 
-        override val key: AttributeKey<Klate> = AttributeKey("Klate")
+val Klate = createApplicationPlugin("Klate", { KlateConfig() }) {
+    pluginConfig.application = application
 
-        override fun install(pipeline: Application, configure: KlateConfig.() -> Unit): Klate {
-            val builder = KlateConfig(pipeline).apply(configure)
+    with(application) {
+        configureDatabase()
+        install(FreeMarker) {
+            templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
+            outputFormat = HTMLOutputFormat.INSTANCE
 
-            with(pipeline) {
-                configureDatabase()
-
-                install(FreeMarker) {
-                    templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
-                    outputFormat = HTMLOutputFormat.INSTANCE
-
-                }
-            }
-
-            return Klate(
-                application = pipeline,
-                securityManager = builder.securityManager!!,
-                indexView = builder.indexView!!
-            )
         }
     }
+
+    application.attributes.put(securityManagerKey, pluginConfig.securityManager!!)
+    application.attributes.put(indexViewKey, pluginConfig.indexView!!)
+    application.attributes.put(baseViewsKey, mutableListOf())
 }
+
+val Application.securityManager: BaseSecurityManager
+    get() = attributes[securityManagerKey]
+
+val Application.baseViews: MutableList<BaseView>
+    get() = attributes[baseViewsKey]
+

@@ -24,8 +24,8 @@ class MVCTest {
     fun `test views`() = testApplication {
         klateEnvironment()
         application {
-            val klate = install(Klate)
-            assertEquals(37, klate.baseViews.size)
+            install(Klate)
+            assertEquals(37, baseViews.size)
         }
     }
 

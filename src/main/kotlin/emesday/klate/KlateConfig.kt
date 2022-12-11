@@ -9,9 +9,12 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlin.reflect.full.*
 
-class KlateConfig(val application: Application) {
+class KlateConfig {
 
-    val klate = application.environment.config.klate
+    lateinit var application: Application
+
+    val klate
+        get() = application.environment.config.klate
 
     var securityManager: BaseSecurityManager? = null
         get() {

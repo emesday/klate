@@ -42,10 +42,10 @@ class SecurityPermissionsTest {
             klate.app.addSecurityViews = false
         }
         application {
-            val klate = install(Klate)
+            install(Klate)
 
-            klate.securityManager.addRole("DB_ROLE1")
-            klate.securityManager.addPermissionViewMenu("can_show", "ModelDBView")
+            securityManager.addRole("DB_ROLE1")
+            securityManager.addPermissionViewMenu("can_show", "ModelDBView")
         }
     }
 }

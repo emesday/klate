@@ -28,8 +28,7 @@ class OAuthTest {
                 klate.auth.type = AuthType.OAUTH
             }
             application {
-                val klate = install(Klate)
-                val securityManager = klate.securityManager
+                install(Klate)
                 securityManager.addTestUsersAndRoles()
                 securityManager.assertOnlyDefaultUsers()
             }
@@ -42,8 +41,7 @@ class OAuthTest {
             klate.auth.type = AuthType.OAUTH
         }
         application {
-            val klate = install(Klate)
-            val securityManager = klate.securityManager
+            install(Klate)
 
             assert(securityManager is DefaultSecurityManager)
             assertEquals(AuthType.OAUTH, securityManager.authType)
@@ -86,8 +84,7 @@ class OAuthTest {
             klate.auth.type = AuthType.OAUTH
         }
         application {
-            val klate = install(Klate)
-            val securityManager = klate.securityManager
+            install(Klate)
 
             assert(securityManager is DefaultSecurityManager)
             assertEquals(AuthType.OAUTH, securityManager.authType)
@@ -117,8 +114,7 @@ class OAuthTest {
             klate.auth.user.registrationRole = "Public"
         }
         application {
-            val klate = install(Klate)
-            val securityManager = klate.securityManager
+            install(Klate)
 
             // validate - no users are registered
             securityManager.assertOnlyDefaultUsers()
@@ -154,8 +150,7 @@ class OAuthTest {
         }
 
         application {
-            val klate = install(Klate)
-            val securityManager = klate.securityManager
+            install(Klate)
 
             // validate - no users are registered
             securityManager.assertOnlyDefaultUsers()
@@ -183,8 +178,7 @@ class OAuthTest {
             klate.auth.user.registrationRole = "Public"
         }
         application {
-            val klate = install(Klate)
-            val securityManager = klate.securityManager
+            install(Klate)
 
             // add User role
             securityManager.addRole("User")
@@ -229,8 +223,7 @@ class OAuthTest {
             klate.auth.user.registrationRole = "Public"
         }
         application {
-            val klate = install(Klate)
-            val securityManager = klate.securityManager
+            install(Klate)
 
             // add User role
             securityManager.addRole("User")
@@ -310,8 +303,7 @@ class OAuthTest {
             klate.auth.roles.syncAtLogin = false
         }
         application {
-            val klate = install(Klate)
-            val securityManager = klate.securityManager
+            install(Klate)
 
             // add User role
             securityManager.addRole("User")
@@ -356,8 +348,7 @@ class OAuthTest {
             klate.auth.roles.syncAtLogin = true
         }
         application {
-            val klate = install(Klate)
-            val securityManager = klate.securityManager
+            install(Klate)
 
             // add User role
             securityManager.addRole("User")
@@ -478,8 +469,7 @@ class OAuthTest {
     @AfterTest
     fun afterTest() = testApplication {
         application {
-            val klate = install(Klate)
-            val securityManager = klate.securityManager
+            install(Klate)
 
             val role = securityManager.findRole("User")
             transaction {
