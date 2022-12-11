@@ -8,13 +8,14 @@ import freemarker.core.*
 import io.ktor.server.application.*
 import io.ktor.server.freemarker.*
 import io.ktor.util.*
-import java.io.*
 
 class Klate(
     val application: Application,
     val securityManager: BaseSecurityManager,
     val indexView: BaseView
 ) {
+
+    val baseViews: MutableList<BaseView> = mutableListOf()
 
     companion object Plugin : BaseApplicationPlugin<Application, KlateConfig, Klate> {
 
