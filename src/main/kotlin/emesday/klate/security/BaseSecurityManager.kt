@@ -52,101 +52,72 @@ abstract class BaseSecurityManager(
     // def get_register_user_datamodel(self):
     // done!: def builtin_roles(self) -> Dict[str, Any]:
 
-    val apiLoginAllowMultipleProviders: Boolean
-        get() = klate.auth.api.loginAllowMultipleProviders
+    val apiLoginAllowMultipleProviders: Boolean = klate.auth.api.loginAllowMultipleProviders
 
-    val authType: AuthType
-        get() = klate.auth.type
+    val authType: AuthType = klate.auth.type
 
-    val authUsernameCI: Boolean
-        get() = klate.auth.usernameCI
+    val authUsernameCI: Boolean = klate.auth.usernameCI
 
-    val authRoleAdmin: String
-        get() = klate.auth.role.admin
+    val authRoleAdmin: String = klate.auth.role.admin
 
-    val authRolePublic: String
-        get() = klate.auth.role.public
+    val authRolePublic: String = klate.auth.role.public
 
     val authLdapServer: String
         get() = klate.auth.ldap.server
 
-    val authLdapUseTls: Boolean
-        get() = klate.auth.ldap.useTls
+    val authLdapUseTls: Boolean = klate.auth.ldap.useTls
 
-    val authUserRegistration: Boolean
-        get() = klate.auth.user.registration
+    val authUserRegistration: Boolean = klate.auth.user.registration
 
-    val authUserRegistrationRole: String
-        get() = klate.auth.user.registrationRole
+    val authUserRegistrationRole: String = klate.auth.user.registrationRole
 
-    val authUserRegistrationRoleJMESPath: String?
-        get() = klate.auth.user.registrationRoleJMESPath
+    val authUserRegistrationRoleJMESPath: String? = klate.auth.user.registrationRoleJMESPath
 
-    val authRolesMapping: Map<String, List<String>>
-        get() = klate.auth.roles.mapping
+    val authRolesMapping: Map<String, List<String>> = klate.auth.roles.mapping
 
-    val authRolesSyncAtLogin: Boolean
-        get() = klate.auth.roles.syncAtLogin
+    val authRolesSyncAtLogin: Boolean = klate.auth.roles.syncAtLogin
 
-    val authLdapSearch: String
-        get() = klate.auth.ldap.search
+    val authLdapSearch: String = klate.auth.ldap.search
 
-    val authldapSearchFilter: String
-        get() = klate.auth.ldap.searchFilter
+    val authldapSearchFilter: String = klate.auth.ldap.searchFilter
 
-    val authLdapBindUser: String
-        get() = klate.auth.ldap.bindUser
+    val authLdapBindUser: String = klate.auth.ldap.bindUser
 
-    val authLdapBindPassword: String
-        get() = klate.auth.ldap.bindPassword
+    val authLdapBindPassword: String = klate.auth.ldap.bindPassword
 
-    val authLdapAppendDomain: String
-        get() = klate.auth.ldap.appendDomain
+    val authLdapAppendDomain: String = klate.auth.ldap.appendDomain
 
-    val authLdapUsernameFormat: String
-        get() = klate.auth.ldap.usernameFormat
+    val authLdapUsernameFormat: String = klate.auth.ldap.usernameFormat
 
-    val authLdapUidField: String
-        get() = klate.auth.ldap.uidField
+    val authLdapUidField: String = klate.auth.ldap.uidField
 
-    val authLdapGroupField: String
-        get() = klate.auth.ldap.groupField
+    val authLdapGroupField: String = klate.auth.ldap.groupField
 
-    val authLdapFirstnameField: String
-        get() = klate.auth.ldap.firstNameField
+    val authLdapFirstnameField: String = klate.auth.ldap.firstNameField
 
-    val authLdapLastnameField: String
-        get() = klate.auth.ldap.lastNameField
+    val authLdapLastnameField: String = klate.auth.ldap.lastNameField
 
-    val authLdapEmailField: String
-        get() = klate.auth.ldap.emailField
+    val authLdapEmailField: String = klate.auth.ldap.emailField
 
     // val authLdapBindFirst
     //     get() = klate.auth.ldap.bindFirst
 
-    val authLdapAllowSelfSigned: Boolean
-        get() = klate.auth.ldap.allowSelfSigned
+    val authLdapAllowSelfSigned: Boolean = klate.auth.ldap.allowSelfSigned
 
-    val authLdapTlsDemand: Boolean
-        get() = klate.auth.ldap.tlsDemand
+    val authLdapTlsDemand: Boolean = klate.auth.ldap.tlsDemand
 
-    val authLdapTlsCACertDir: String
-        get() = klate.auth.ldap.tlsCACertDir
+    val authLdapTlsCACertDir: String = klate.auth.ldap.tlsCACertDir
 
-    val authLdapTlsCACertFile: String
-        get() = klate.auth.ldap.tlsCACertFile
+    val authLdapTlsCACertFile: String = klate.auth.ldap.tlsCACertFile
 
-    val authLdapTlsCertFile: String
-        get() = klate.auth.ldap.tlsCertFile
+    val authLdapTlsCertFile: String = klate.auth.ldap.tlsCertFile
 
-    val authLdapTlsKeyFile: String
-        get() = klate.auth.ldap.tlsKeyFile
+    val authLdapTlsKeyFile: String = klate.auth.ldap.tlsKeyFile
 
     // val openid_providers
     //     get() = klate
 
-    val oauthProviders: List<String>
-        get() = klate.auth.oauth.providers
+    val oauthProviders: List<String> = klate.auth.oauth.providers
 
     fun updateUserAuthStat(user: UserItf, success: Boolean = true) {
         user.mutate {
@@ -417,7 +388,6 @@ abstract class BaseSecurityManager(
      */
     fun createDb() {
         val rolesMapping = klate.app.rolesMapping
-
     }
 
     init {
