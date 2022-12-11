@@ -1,0 +1,7 @@
+klate:
+  auth:
+    roles:
+      mapping:
+        public:
+          - public1
+          - public2
