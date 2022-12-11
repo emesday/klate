@@ -25,6 +25,9 @@ open class RoutableRoute {
     operator fun invoke(route: Route): Route {
         return register(route)
     }
+
+    open fun routing(route: Route) {
+    }
 }
 
 fun RoutableRoute.copyFrom(src: RoutableRoute): RoutableRoute =

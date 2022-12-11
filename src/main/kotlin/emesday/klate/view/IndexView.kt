@@ -6,21 +6,50 @@ import io.ktor.server.freemarker.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+open class IndexView : BaseView() {
 
-val IndexView: View = createView {
-    routeBase = ""
+    override var routeBase: String? = ""
 
-    defaultView = "index"
+    override var defaultView: String = "index"
 
-    routable {
-        get {
-            call.respond(
-                FreeMarkerContent("appbuilder/index.ftl", Context("value"))
-            )
+    open val indexTemplate = "appbuilder/index.ftl"
+
+    override fun routing(route: Route) {
+        route {
+            get {
+                call.respond(
+                    FreeMarkerContent(indexTemplate, Context("value"))
+                )
+            }
         }
     }
 }
 
-val IndexView2: View = copyView(IndexView) {
-    routeBase = "index2"
+
+fun Application.createDefaultIndexView(): BaseView = with(this) {
+    lateinit var view: BaseView
+    routing {
+        view = createView(this) {
+            routeBase = ""
+
+            defaultView = "index"
+
+            routable {
+                get {
+                    call.respond(
+                        FreeMarkerContent("appbuilder/index.ftl", Context("value"))
+                    )
+                }
+            }
+        }
+    }
+    return view
+}
+
+fun Application.createDefaultIndexView2(): BaseView = with(this) {
+    lateinit var view: BaseView
+    routing {
+
+    }
+    return view
 }

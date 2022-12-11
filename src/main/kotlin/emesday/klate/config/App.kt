@@ -28,4 +28,8 @@ class KlateApplicationConfigApp(
     var rolesMapping: Map<Int, String> = emptyMap()
 //        get() = mapGetter("rolesMapping")
 //        set(value) = mapSetter("rolesMapping", value)
+
+    var indexView: String?
+        get() = ac.string(combine("indexView"))
+        set(value) = ac.put(combine("indexView"), value)
 }

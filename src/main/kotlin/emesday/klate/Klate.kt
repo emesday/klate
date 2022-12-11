@@ -2,12 +2,18 @@ package emesday.klate
 
 import emesday.klate.database.*
 import emesday.klate.security.*
+import emesday.klate.view.*
+import freemarker.cache.*
+import freemarker.core.*
 import io.ktor.server.application.*
+import io.ktor.server.freemarker.*
 import io.ktor.util.*
+import java.io.*
 
 class Klate(
     val application: Application,
     val securityManager: BaseSecurityManager,
+    val indexView: BaseView
 ) {
 
     companion object Plugin : BaseApplicationPlugin<Application, KlateConfig, Klate> {
@@ -19,11 +25,18 @@ class Klate(
 
             with(pipeline) {
                 configureDatabase()
+
+                install(FreeMarker) {
+                    templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
+                    outputFormat = HTMLOutputFormat.INSTANCE
+
+                }
             }
 
             return Klate(
                 application = pipeline,
-                securityManager = builder.securityManager!!
+                securityManager = builder.securityManager!!,
+                indexView = builder.indexView!!
             )
         }
     }

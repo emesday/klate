@@ -3,7 +3,6 @@ package emesday.quickhowto2
 import emesday.klate.*
 import emesday.klate.api.*
 import emesday.klate.security.*
-import emesday.klate.view.*
 import emesday.quickhowto2.dao.*
 import emesday.quickhowto2.plugins.*
 import freemarker.cache.*
@@ -63,8 +62,6 @@ fun Application.module() {
             resources(".")
         }
 
-        register(IndexView)
-        register(IndexView2)
         // or IndexView(this) or IndexView.register(this)
         register(MenuApi)
 
