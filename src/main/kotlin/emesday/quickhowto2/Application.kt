@@ -2,7 +2,6 @@ package emesday.quickhowto2
 
 import emesday.klate.*
 import emesday.klate.api.*
-import emesday.klate.menu.*
 import emesday.klate.security.*
 import emesday.klate.view.*
 import emesday.quickhowto2.dao.*
@@ -76,12 +75,12 @@ fun Application.module() {
         register(ContactGroupApi)
     }
 
-    menu {
-        item("databases", "Database Connections", "fa-database", "")
-        item("daum", "Daum", "fa-flask", "")
-        category("Data", "Data collections", "fa-databases") {
-            item("databases", "Database Connections", "fa-database", "")
-            separator()
-        }
-    }
+//    menu {
+//        item("databases", "Database Connections", "fa-database", "")
+//        item("daum", "Daum", "fa-flask", "")
+//        category("Data", "Data collections", "fa-databases") {
+//            item("databases", "Database Connections", "fa-database", "")
+//            separator()
+//        }
+//    }
 }
