@@ -2,6 +2,19 @@ package emesday.klate.security
 
 import java.time.*
 
+interface PermissionItf {
+    var name: String
+}
+
+interface ViewMenuItf {
+    var name: String
+}
+
+interface PermissionViewItf <out PERMISSION : PermissionItf, out VIEW_MENU : ViewMenuItf> {
+    val permission: PERMISSION
+    val viewMenu: VIEW_MENU
+}
+
 interface RoleItf {
     var name: String
 
@@ -10,7 +23,7 @@ interface RoleItf {
     }
 }
 
-interface UserItf {
+interface UserItf <out ROLE : RoleItf> {
 
     var firstName: String
 
@@ -28,9 +41,9 @@ interface UserItf {
 
     var active: Boolean
 
-    var roles: List<RoleItf>
+    val roles: Iterable<ROLE>
 
-    fun <T> mutate(block: UserItf.() -> T) {
+    fun <T> mutate(block: UserItf<ROLE>.() -> T) {
         block(this)
     }
 }

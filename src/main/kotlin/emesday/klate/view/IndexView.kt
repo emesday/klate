@@ -14,42 +14,11 @@ open class IndexView : BaseView() {
 
     open val indexTemplate = "appbuilder/index.ftl"
 
-    override fun routing(route: Route) {
-        route {
-            get {
-                call.respond(
-                    FreeMarkerContent(indexTemplate, Context("value"))
-                )
-            }
+    override fun Route.routing() = routing {
+        get {
+            call.respond(
+                FreeMarkerContent(indexTemplate, Context("value"))
+            )
         }
     }
-}
-
-
-fun Application.createDefaultIndexView(): BaseView = with(this) {
-    lateinit var view: BaseView
-    routing {
-        view = createView(this) {
-            routeBase = ""
-
-            defaultView = "index"
-
-            routable {
-                get {
-                    call.respond(
-                        FreeMarkerContent("appbuilder/index.ftl", Context("value"))
-                    )
-                }
-            }
-        }
-    }
-    return view
-}
-
-fun Application.createDefaultIndexView2(): BaseView = with(this) {
-    lateinit var view: BaseView
-    routing {
-
-    }
-    return view
 }

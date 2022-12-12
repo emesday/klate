@@ -14,10 +14,11 @@ class MVCTest {
 
     suspend fun HttpClient.browserLogin(username: String, password: String) {
         val loginUrl = "/login/"
-        post(loginUrl) {
+        val x = post(loginUrl) {
             header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
             setBody(listOf("username" to username, "password" to password).formUrlEncode())
         }
+        println(x.status)
     }
 
     @Test
@@ -25,7 +26,7 @@ class MVCTest {
         klateEnvironment()
         application {
             install(Klate)
-            assertEquals(37, baseViews.size)
+            assertEquals(37, klate.baseViews.size)
         }
     }
 

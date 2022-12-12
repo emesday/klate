@@ -14,10 +14,10 @@ object Permissions : IntIdTable("ab_permission") {
     val name = varchar("name", 100).uniqueIndex()
 }
 
-class Permission(id: EntityID<Int>) : IntEntity(id) {
+class Permission(id: EntityID<Int>) : IntEntity(id), PermissionItf {
     companion object : IntEntityClass<Permission>(Permissions)
 
-    var name by Permissions.name
+    override var name by Permissions.name
 }
 
 object ViewMenus : IntIdTable("ab_view_menu") {
@@ -25,10 +25,10 @@ object ViewMenus : IntIdTable("ab_view_menu") {
     val name = varchar("name", 250).uniqueIndex()
 }
 
-class ViewMenu(id: EntityID<Int>) : IntEntity(id) {
+class ViewMenu(id: EntityID<Int>) : IntEntity(id), ViewMenuItf {
     companion object : IntEntityClass<ViewMenu>(ViewMenus)
 
-    var name by ViewMenus.name
+    override var name by ViewMenus.name
 }
 
 // --
@@ -83,11 +83,11 @@ object PermissionViews : IntIdTable("ab_permission_view") {
     val viewMenu = reference("view_menu", ViewMenus)
 }
 
-class PermissionView(id: EntityID<Int>) : IntEntity(id) {
+class PermissionView(id: EntityID<Int>) : IntEntity(id), PermissionViewItf<Permission, ViewMenu> {
     companion object : IntEntityClass<PermissionView>(PermissionViews)
 
-    var permission by Permission referencedOn PermissionViews.permission
-    var viewMenu by ViewMenu referencedOn PermissionViews.viewMenu
+    override var permission by Permission referencedOn PermissionViews.permission
+    override var viewMenu by ViewMenu referencedOn PermissionViews.viewMenu
 }
 
 object UserRoles : IntIdTable("ab_user_role") {
@@ -118,7 +118,7 @@ object Users : IntIdTable("ab_user") {
     val changedBy = reference("changed_by", Users).nullable()
 }
 
-class User(id: EntityID<Int>) : IntEntity(id), UserItf {
+class User(id: EntityID<Int>) : IntEntity(id), UserItf<Role> {
     companion object : IntEntityClass<User>(Users)
 
     override var firstName by Users.firstName
@@ -132,30 +132,13 @@ class User(id: EntityID<Int>) : IntEntity(id), UserItf {
     override var loginCount by Users.loginCount
     override var failLoginCount by Users.failLoginCount
 
-    private var roles0 by Role via UserRoles
-
-    override var roles: List<RoleItf>
-        get() = run {
-            // ensure transaction or throw
-            TransactionManager.current()
-            roles0.toList()
-        }
-        set(value) {
-            val castedValue = value.mapNotNull {
-                if (it is Role) {
-                    it
-                } else {
-                    null
-                }
-            }
-            roles0 = SizedCollection(castedValue)
-        }
+    override var roles: SizedIterable<Role> by Role via UserRoles
 
     var createdOn by Users.createdOn
     var changedOn by Users.changedOn
     var createdBy by Users.createdBy
     var changedBy by Users.changedBy
-    override fun <T> mutate(block: UserItf.() -> T) = transaction {
+    override fun <T> mutate(block: UserItf<Role>.() -> T) = transaction {
         super.mutate(block)
     }
 

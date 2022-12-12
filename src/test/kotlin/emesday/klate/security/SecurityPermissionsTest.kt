@@ -44,8 +44,8 @@ class SecurityPermissionsTest {
         application {
             install(Klate)
 
-            securityManager.addRole("DB_ROLE1")
-            securityManager.addPermissionViewMenu("can_show", "ModelDBView")
+            klate.securityManager.addRole("DB_ROLE1")
+            klate.securityManager.addPermissionViewMenu("can_show", "ModelDBView")
         }
     }
 }

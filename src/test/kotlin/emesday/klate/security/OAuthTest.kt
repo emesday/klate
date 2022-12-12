@@ -29,8 +29,8 @@ class OAuthTest {
             }
             application {
                 install(Klate)
-                securityManager.addTestUsersAndRoles()
-                securityManager.assertOnlyDefaultUsers()
+                klate.securityManager.addTestUsersAndRoles()
+                klate.securityManager.assertOnlyDefaultUsers()
             }
         }
     }
@@ -43,14 +43,14 @@ class OAuthTest {
         application {
             install(Klate)
 
-            assert(securityManager is DefaultSecurityManager)
-            assertEquals(AuthType.OAUTH, securityManager.authType)
+            assert(klate.securityManager is DefaultSecurityManager)
+            assertEquals(AuthType.OAUTH, klate.securityManager.authType)
 
             // validate - no users are registered
-            securityManager.assertOnlyDefaultUsers()
+            klate.securityManager.assertOnlyDefaultUsers()
 
             // register a user
-            val newUser = securityManager.addUser(
+            val newUser = klate.securityManager.addUser(
                 username = userInfoAlice.username!!,
                 firstName = userInfoAlice.firstName!!,
                 lastName = userInfoAlice.lastName!!,
@@ -61,7 +61,7 @@ class OAuthTest {
             assertNotNull(newUser)
 
             // validate - user was registered
-            securityManager.withUsers {
+            klate.securityManager.withUsers {
                 assertEquals(3, count())
             }
 
@@ -71,7 +71,7 @@ class OAuthTest {
             }
 
             // attempt login
-            val user = securityManager.authUserOAuth(userInfoAlice)
+            val user = klate.securityManager.authUserOAuth(userInfoAlice)
 
             // validate - user was not allowed to log in
             assertNull(user)
@@ -86,23 +86,23 @@ class OAuthTest {
         application {
             install(Klate)
 
-            assert(securityManager is DefaultSecurityManager)
-            assertEquals(AuthType.OAUTH, securityManager.authType)
+            assert(klate.securityManager is DefaultSecurityManager)
+            assertEquals(AuthType.OAUTH, klate.securityManager.authType)
 
             // validate - no users are registered
-            securityManager.assertOnlyDefaultUsers()
+            klate.securityManager.assertOnlyDefaultUsers()
 
             // create userinfo with missing info
             val userInfoMissing = userInfoAlice.copy(username = null)
 
             // attempt login
-            val user = securityManager.authUserOAuth(userInfoMissing)
+            val user = klate.securityManager.authUserOAuth(userInfoMissing)
 
             // validate - login failure (missing username)
             assertNull(user)
 
             // validate - no users were created
-            securityManager.assertOnlyDefaultUsers()
+            klate.securityManager.assertOnlyDefaultUsers()
         }
     }
 
@@ -117,22 +117,22 @@ class OAuthTest {
             install(Klate)
 
             // validate - no users are registered
-            securityManager.assertOnlyDefaultUsers()
+            klate.securityManager.assertOnlyDefaultUsers()
 
             // attempt login
-            val user = securityManager.authUserOAuth(userInfoAlice)
+            val user = klate.securityManager.authUserOAuth(userInfoAlice)
 
             // validate - user was allowed to log in
             assertNotNull(user)
 
             // validate - user was registered
-            securityManager.withUsers {
+            klate.securityManager.withUsers {
                 assertEquals(3, count())
             }
 
             // validate - user was given the AUTH_USER_REGISTRATION_ROLE role
             transaction {
-                assertEquals(listOfNotNull(securityManager.findRole("Public")), user.roles)
+                assertEquals(listOfNotNull(klate.securityManager.findRole("Public")), user.roles)
             }
 
             // validate - user was given the correct attributes
@@ -153,16 +153,16 @@ class OAuthTest {
             install(Klate)
 
             // validate - no users are registered
-            securityManager.assertOnlyDefaultUsers()
+            klate.securityManager.assertOnlyDefaultUsers()
 
             // attempt login
-            val user = securityManager.authUserOAuth(userInfoAlice)
+            val user = klate.securityManager.authUserOAuth(userInfoAlice)
 
             // validate - user was not allowed to log in
             assertNull(user)
 
             // validate - no users were registered
-            securityManager.assertOnlyDefaultUsers()
+            klate.securityManager.assertOnlyDefaultUsers()
         }
     }
 
@@ -181,26 +181,26 @@ class OAuthTest {
             install(Klate)
 
             // add User role
-            securityManager.addRole("User")
+            klate.securityManager.addRole("User")
 
             // validate - no users are registered
-            securityManager.assertOnlyDefaultUsers()
+            klate.securityManager.assertOnlyDefaultUsers()
 
             // attempt login
-            val user = securityManager.authUserOAuth(userInfoAlice)
+            val user = klate.securityManager.authUserOAuth(userInfoAlice)
 
             // validate - user was allowed to log in
             assertNotNull(user)
 
             // validate - user was registered
-            securityManager.withUsers {
+            klate.securityManager.withUsers {
                 assertEquals(3, count())
             }
 
             // validate - user was given the correct roles
             transaction {
                 assertContentEquals(
-                    listOf("Admin", "Public", "User").mapNotNull { securityManager.findRole(it) }.sortedBy { it.name },
+                    listOf("Admin", "Public", "User").mapNotNull { klate.securityManager.findRole(it) }.sortedBy { it.name },
                     user.roles.toSet().sortedBy { it.name },
                 )
             }
@@ -226,26 +226,26 @@ class OAuthTest {
             install(Klate)
 
             // add User role
-            securityManager.addRole("User")
+            klate.securityManager.addRole("User")
 
             // validate - no users are registered
-            securityManager.assertOnlyDefaultUsers()
+            klate.securityManager.assertOnlyDefaultUsers()
 
             // attempt login
-            val user = securityManager.authUserOAuth(userInfoAlice)
+            val user = klate.securityManager.authUserOAuth(userInfoAlice)
 
             // validate - user was allowed to log in
             assertNotNull(user)
 
             // validate - user was registered
-            securityManager.withUsers {
+            klate.securityManager.withUsers {
                 assertEquals(3, count())
             }
 
             // validate - user was given the correct roles
             transaction {
                 assertContentEquals(
-                    listOf("Admin", "Public", "User").mapNotNull { securityManager.findRole(it) }.sortedBy { it.name },
+                    listOf("Admin", "Public", "User").mapNotNull { klate.securityManager.findRole(it) }.sortedBy { it.name },
                     user.roles.toSet().sortedBy { it.name },
                 )
             }
@@ -306,13 +306,13 @@ class OAuthTest {
             install(Klate)
 
             // add User role
-            securityManager.addRole("User")
+            klate.securityManager.addRole("User")
 
             // validate - no users are registered
-            securityManager.assertOnlyDefaultUsers()
+            klate.securityManager.assertOnlyDefaultUsers()
 
             // register a user
-            val newUser = securityManager.addUser(
+            val newUser = klate.securityManager.addUser(
                 username = userInfoAlice.username!!,
                 firstName = userInfoAlice.firstName!!,
                 lastName = userInfoAlice.lastName!!,
@@ -321,19 +321,19 @@ class OAuthTest {
             )
 
             // validate - user was registered
-            securityManager.withUsers {
+            klate.securityManager.withUsers {
                 assertEquals(3, count())
             }
 
             // attempt login
-            val user = securityManager.authUserOAuth(userInfoAlice)
+            val user = klate.securityManager.authUserOAuth(userInfoAlice)
 
             // validate - user was allowed to log in
             assertNotNull(user)
 
             // validate - user was given no roles
             transaction {
-                assert(user.roles.isEmpty())
+                assert(user.roles.count() == 0)
             }
         }
     }
@@ -351,13 +351,13 @@ class OAuthTest {
             install(Klate)
 
             // add User role
-            securityManager.addRole("User")
+            klate.securityManager.addRole("User")
 
             // validate - no users are registered
-            securityManager.assertOnlyDefaultUsers()
+            klate.securityManager.assertOnlyDefaultUsers()
 
             // register a user
-            val newUser = securityManager.addUser(
+            val newUser = klate.securityManager.addUser(
                 username = userInfoAlice.username!!,
                 firstName = userInfoAlice.firstName!!,
                 lastName = userInfoAlice.lastName!!,
@@ -367,13 +367,13 @@ class OAuthTest {
 
 
             // validate - user was registered
-            securityManager.withUsers {
+            klate.securityManager.withUsers {
                 assertEquals(3, count())
             }
 
 
             // attempt login
-            val user = securityManager.authUserOAuth(userInfoAlice)
+            val user = klate.securityManager.authUserOAuth(userInfoAlice)
 
             // validate - user was allowed to log in
             assertNotNull(user)
@@ -381,7 +381,7 @@ class OAuthTest {
             // validate - user was given the correct roles
             transaction {
                 assertContentEquals(
-                    listOf("Admin", "User").mapNotNull { securityManager.findRole(it) }.sortedBy { it.name },
+                    listOf("Admin", "User").mapNotNull { klate.securityManager.findRole(it) }.sortedBy { it.name },
                     user.roles.toSet().sortedBy { it.name },
                 )
             }
@@ -471,14 +471,14 @@ class OAuthTest {
         application {
             install(Klate)
 
-            val role = securityManager.findRole("User")
+            val role = klate.securityManager.findRole("User")
             transaction {
                 if (role != null && role is Role) {
                     role.delete()
                 }
             }
 
-            securityManager.findUser(userInfoAlice.username!!)?.let { user ->
+            klate.securityManager.findUser(userInfoAlice.username!!)?.let { user ->
                 transaction {
                     if (user is User) {
                         user.delete()
@@ -491,7 +491,7 @@ class OAuthTest {
     }
 }
 
-fun BaseSecurityManager.assertOnlyDefaultUsers() {
+fun BaseSecurityManager<out UserItf<*>, out RoleItf, *, *, *>.assertOnlyDefaultUsers() {
     val userNames = withUsers {
         map { it.username }
     }

@@ -2,39 +2,58 @@ package emesday.klate
 
 import emesday.klate.database.*
 import emesday.klate.security.*
+import emesday.klate.security.views.*
 import emesday.klate.view.*
-import freemarker.cache.*
 import freemarker.core.*
 import io.ktor.server.application.*
 import io.ktor.server.freemarker.*
+import io.ktor.server.routing.*
 import io.ktor.util.*
 
-val securityManagerKey = AttributeKey<BaseSecurityManager>("securityManager")
+class KlatePluginInstance(
+    val securityManager: BaseSecurityManager<
+            out UserItf<RoleItf>,
+            out RoleItf,
+            out PermissionItf,
+            out ViewMenuItf,
+            out PermissionViewItf<PermissionItf, ViewMenuItf>>,
+    val indexView: BaseView
+) {
 
-val indexViewKey = AttributeKey<BaseView>("indexView")
+    val baseViews: MutableList<BaseView> = mutableListOf(AuthDBView())
+}
 
-val baseViewsKey = AttributeKey<MutableList<BaseView>>("baseViews")
+val klatePluginInstanceKey = AttributeKey<KlatePluginInstance>("KlatePluginInstance")
 
 val Klate = createApplicationPlugin("Klate", { KlateConfig() }) {
-    pluginConfig.application = application
+    val config = pluginConfig
 
+    config.application = application
     with(application) {
         configureDatabase()
         install(FreeMarker) {
-            templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
+            templateLoader = config.templateLoader!!
             outputFormat = HTMLOutputFormat.INSTANCE
-
         }
-    }
 
-    application.attributes.put(securityManagerKey, pluginConfig.securityManager!!)
-    application.attributes.put(indexViewKey, pluginConfig.indexView!!)
-    application.attributes.put(baseViewsKey, mutableListOf())
+        val klatePluginInstance = KlatePluginInstance(
+            config.securityManager!!,
+            config.indexView!!
+        )
+
+        routing {
+            register(klatePluginInstance.indexView)
+            for (view in klatePluginInstance.baseViews) {
+                register(view)
+            }
+        }
+
+        attributes.put(klatePluginInstanceKey, klatePluginInstance)
+    }
 }
 
-val Application.securityManager: BaseSecurityManager
-    get() = attributes[securityManagerKey]
+val Application.klate: KlatePluginInstance
+    get() = attributes[klatePluginInstanceKey]
 
-val Application.baseViews: MutableList<BaseView>
-    get() = attributes[baseViewsKey]
-
+val ApplicationCall.klate: KlatePluginInstance
+    get() = application.klate

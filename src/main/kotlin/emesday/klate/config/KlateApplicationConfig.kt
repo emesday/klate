@@ -1,5 +1,6 @@
 package emesday.klate.config
 
+import io.ktor.server.application.*
 import io.ktor.server.config.*
 
 private var klateApplicationConfigInstance: KlateApplicationConfig? = null
@@ -64,6 +65,56 @@ internal fun KlateApplicationConfigChild.mapSetter(subPath: String, value: Map<S
     }
 }
 
+
+internal fun <V> KlateApplicationConfigChild.getAsMap(
+    path: String,
+    getValue: (ApplicationConfig, String) -> V?
+): Map<String, V> = getAsMap(path, { it }, getValue)
+
+internal fun <K, V> KlateApplicationConfigChild.getAsMap(
+    path: String,
+    getKey: (String) -> K?,
+    getValue: (ApplicationConfig, String) -> V?
+): Map<K, V> {
+    return ac.keys()
+        .filter { it.startsWith(path) }
+        .mapNotNull { fullPath ->
+            val key = getKey(fullPath.removePrefix("$path."))
+            val value = getValue(ac, fullPath)
+            if (key != null && value != null) {
+                key to value
+            } else {
+                null
+            }
+        }
+        .toMap()
+}
+
+internal fun <K, V> KlateApplicationConfigChild.setMapStringValues(
+    path: String,
+    getKey: (K) -> String,
+    getValue: (V) -> String,
+    value: Map<K, V>
+) {
+
+    for ((k, v) in value) {
+        ac.put("$path.${getKey(k)}", getValue(v))
+    }
+}
+
+internal fun <K, V> KlateApplicationConfigChild.setMapListValues(
+    path: String,
+    getKey: (K) -> String,
+    getValue: (V) -> Iterable<String>,
+    value: Map<K, V>
+) {
+
+    for ((k, v) in value) {
+        ac.put("$path.${getKey(k)}", getValue(v))
+    }
+}
+
+
 class KlateApplicationConfig(
     override val ac: ApplicationConfig,
 ) : KlateApplicationConfigChild {
@@ -101,9 +152,12 @@ class KlateApplicationConfig(
 }
 
 val AC.klate: KlateApplicationConfig
-    get() = run {
+    get() {
         if (klateApplicationConfigInstance == null) {
             klateApplicationConfigInstance = KlateApplicationConfig(this)
         }
-        klateApplicationConfigInstance!!
+        return klateApplicationConfigInstance!!
     }
+
+val Application.ac: ApplicationConfig
+    get() = environment.config

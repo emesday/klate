@@ -1,11 +1,13 @@
 package emesday.klate.security.defaults
 
+import emesday.klate.*
 import emesday.klate.exceptions.*
 import emesday.klate.security.*
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.*
+import kotlin.system.*
 
 /**
  * Responsible for authentication, registering security views,
@@ -15,18 +17,19 @@ import org.jetbrains.exposed.sql.transactions.*
  * pass your own security manager to AppBuilder.
  */
 open class DefaultSecurityManager(application: Application) :
-    BaseSecurityManager(application) {
+    BaseSecurityManager<
+            User,
+            Role,
+            Permission,
+            ViewMenu,
+            PermissionView>(application) {
 
-    init {
-        createDefaultSecurityManagerTables()
-    }
-
-    override fun updateUser(user: UserItf) {
+    override fun updateUser(user: User) {
         // required ?
     }
 
     override fun countUsers(): Int {
-        TODO("Not yet implemented")
+        return 0
     }
 
     override fun addUser(
@@ -34,9 +37,9 @@ open class DefaultSecurityManager(application: Application) :
         firstName: String,
         lastName: String,
         email: String,
-        roles: List<RoleItf>,
+        roles: Iterable<Role>,
         password: String,
-    ): UserItf? = run {
+    ): User? = run {
         val user = transaction {
             User.new {
                 this.firstName = firstName
@@ -52,17 +55,17 @@ open class DefaultSecurityManager(application: Application) :
         }
 
         transaction {
-            user.roles = roles
+            user.roles = SizedCollection(roles.toList())
         }
 
         user
     }
 
-    override fun <T> withUsers(block: Iterable<UserItf>.() -> T): T = transaction {
+    override fun <T> withUsers(block: Iterable<User>.() -> T): T = transaction {
         User.all().block()
     }
 
-    override fun authUserOAuth(userInfo: UserInfo): UserItf? {
+    override fun authUserOAuth(userInfo: UserInfo): User? {
         val username = userInfo.username
             ?: userInfo.email
             ?: throw KlateException("OAUTH userinfo does not have username or email")
@@ -88,7 +91,7 @@ open class DefaultSecurityManager(application: Application) :
         if (user != null && authRolesSyncAtLogin) {
             val userLocal = user
             transaction {
-                userLocal.roles = oauthCalculateUserRoles(userInfo)
+                userLocal.roles = SizedCollection(oauthCalculateUserRoles(userInfo).toList())
             }
             transaction {
                 log.debug(
@@ -104,7 +107,7 @@ open class DefaultSecurityManager(application: Application) :
                 firstName = userInfo.firstName ?: "",
                 lastName = userInfo.lastName ?: "",
                 email = userInfo.email ?: "$username@email.notfound",
-                roles = oauthCalculateUserRoles(userInfo)
+                roles = SizedCollection(oauthCalculateUserRoles(userInfo).toList())
             )
             log.debug("New user registered: $user")
 
@@ -147,17 +150,40 @@ open class DefaultSecurityManager(application: Application) :
         TODO("Not yet implemented")
     }
 
-    override fun addRole(role: String): RoleItf? = transaction {
-        Role.new {
-            name = role
+    override fun addRole(role: String, permissions: List<PermissionView>?): Role? {
+        val perms = permissions ?: emptyList()
+        return findRole(role)
+            ?: transaction {
+                try {
+                    val newRole = Role.new {
+                        this.name = role
+//                        this.permissions = SizedCollection(perms)
+                    }
+                    commit()
+                    newRole
+                } catch (ex: Exception) {
+                    log.error(LOGMSG_ERR_SEC_ADD_ROLE.format(ex.message))
+                    rollback()
+                    null
+                }
+            }
+    }
+
+    override fun updateRole(pk: Int, name: String): Unit = transaction {
+        val role = Role.findById(pk)
+        if (role != null) {
+            try {
+                role.name = name
+                commit()
+                log.info(LOGMSG_INF_SEC_UPD_ROLE.format(role))
+            } catch (ex: Exception) {
+                log.error(LOGMSG_ERR_SEC_UPD_ROLE.format(ex.message))
+                rollback()
+            }
         }
     }
 
-    override fun updateRole(pk: String, name: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getAllRoles(): List<RoleItf> {
+    override fun getAllRoles(): List<Role> {
         TODO("Not yet implemented")
     }
 
@@ -213,11 +239,11 @@ open class DefaultSecurityManager(application: Application) :
         TODO("Not yet implemented")
     }
 
-    override fun findRole(role: String): RoleItf? = transaction {
+    override fun findRole(role: String): Role? = transaction {
         Role.find(Roles.name eq role).firstOrNull()
     }
 
-    override fun findUser(username: String?, email: String?): UserItf? = transaction {
+    override fun findUser(username: String?, email: String?): User? = transaction {
         if (username != null) {
             if (authUsernameCI) {
                 User.find(
@@ -237,7 +263,7 @@ open class DefaultSecurityManager(application: Application) :
         }
     }
 
-    override fun getAllUsers(): List<UserItf> {
+    override fun getAllUsers(): List<User> {
         TODO("Not yet implemented")
     }
 
@@ -248,7 +274,7 @@ open class DefaultSecurityManager(application: Application) :
     override fun addPermissionViewMenu(
         permissionName: String,
         viewMenuName: String,
-    ) {
+    ): PermissionView {
 
 
         //        if not (permission_name and view_menu_name):
@@ -268,6 +294,7 @@ open class DefaultSecurityManager(application: Application) :
         //        except Exception as e:
         //            log.error(c.LOGMSG_ERR_SEC_ADD_PERMVIEW.format(str(e)))
         //            self.get_session.rollback()
+        TODO()
 
     }
 
@@ -329,6 +356,20 @@ open class DefaultSecurityManager(application: Application) :
 
     override fun noopUserUpdate(user: String) {
         TODO("Not yet implemented")
+    }
+
+    final override fun createDB() {
+        try {
+            createDefaultSecurityManagerTables()
+            super.createDB()
+        } catch (ex: Exception) {
+            log.error(LOGMSG_ERR_SEC_CREATE_DB.format(ex.message))
+            exitProcess(1)
+        }
+    }
+
+    init {
+        createDB()
     }
 }
 

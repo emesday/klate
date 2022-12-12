@@ -9,26 +9,26 @@ import org.jetbrains.exposed.dao.id.*
 open class ModelApi(table: IdTable<*>) : Api() {
 
     init {
-        routable {
-            get("_info") {
-                info(this)
-            }
-            get("{pk}") {
-                get(this)
-            }
-            get {
-                getList(this)
-            }
-            post {
-                post(this)
-            }
-            put("{pk}") {
-                put(this)
-            }
-            delete("{pk}") {
-                delete(this)
-            }
-        }
+//        routable {
+//            get("_info") {
+//                info(this)
+//            }
+//            get("{pk}") {
+//                get(this)
+//            }
+//            get {
+//                getList(this)
+//            }
+//            post {
+//                post(this)
+//            }
+//            put("{pk}") {
+//                put(this)
+//            }
+//            delete("{pk}") {
+//                delete(this)
+//            }
+//        }
     }
 
     suspend fun info(
@@ -64,6 +64,10 @@ open class ModelApi(table: IdTable<*>) : Api() {
 
     suspend fun delete(pipeline: PipelineContext<Unit, ApplicationCall>) = with(pipeline) {
         call.respondText("delete")
+    }
+
+    override fun Route.routing() {
+        TODO("Not yet implemented")
     }
 }
 

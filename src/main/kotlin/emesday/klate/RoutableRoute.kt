@@ -1,40 +1,28 @@
 package emesday.klate
 
+import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.util.*
 
-open class RoutableRoute {
-    val routableRoutes: MutableList<Route.() -> Unit> = mutableListOf()
+abstract class RoutableRoute {
 
     open var routeBase: String? = null
         get() = field ?: ""
 
-    @KtorDsl
-    fun routable(route: Route.() -> Unit) {
-        routableRoutes.add(route)
-    }
-
-    fun register(route: Route): Route {
-        return route.route(routeBase!!) {
-            for (it in routableRoutes) {
-                it()
-            }
+    fun register(route: Route): Route = with(route) {
+        initialize(application)
+        route(routeBase!!) {
+            routing()
         }
     }
 
-    operator fun invoke(route: Route): Route {
-        return register(route)
-    }
+    @KtorDsl
+    protected fun Route.routing(body: Route.() -> Unit) = invoke { body() }
 
-    open fun routing(route: Route) {
-    }
+    abstract fun Route.routing()
+
+    open fun initialize(application: Application) {}
 }
-
-fun RoutableRoute.copyFrom(src: RoutableRoute): RoutableRoute =
-    apply {
-        routableRoutes.addAll(src.routableRoutes)
-        routeBase = src.routeBase
-    }
 
 fun Route.register(baseView: RoutableRoute): Route {
     return baseView.register(this)

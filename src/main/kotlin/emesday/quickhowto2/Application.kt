@@ -37,11 +37,6 @@ fun Application.module() {
     install(ConditionalHeaders)
     install(PartialContent)
     install(Resources)
-    install(FreeMarker) {
-//        templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
-        templateLoader = FileTemplateLoader(File("src/main/resources/templates"))
-        outputFormat = HTMLOutputFormat.INSTANCE
-    }
     install(Sessions) {
         cookie<Session>("SESSION") {
             transform(SessionTransportTransformerMessageAuthentication(hashKey))
@@ -53,24 +48,21 @@ fun Application.module() {
 
     install(Klate)
 
-    routing {
-        get("debug") {
-
-        }
-        static("/static") {
-            staticBasePackage = "files"
-            resources(".")
-        }
-
-        // or IndexView(this) or IndexView.register(this)
-        register(MenuApi)
-
-        hello()
-        links()
-
-        register(ContactApi)
-        register(ContactGroupApi)
-    }
+//    routing {
+//        get("debug") {
+//
+//        }
+//        static("/static") {
+//            staticBasePackage = "files"
+//            resources(".")
+//        }
+//
+//        hello()
+//        links()
+//
+//        register(ContactApi)
+//        register(ContactGroupApi)
+//    }
 
 //    menu {
 //        item("databases", "Database Connections", "fa-database", "")

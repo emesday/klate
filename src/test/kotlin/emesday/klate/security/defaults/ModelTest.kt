@@ -3,6 +3,7 @@ package emesday.klate.security.defaults
 import emesday.klate.*
 import emesday.klate.database.*
 import io.ktor.server.testing.*
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.*
 import kotlin.test.*
 
@@ -38,7 +39,7 @@ class ModelTest {
             }
 
             transaction {
-                user.roles = listOf(role)
+                user.roles = SizedCollection(role)
             }
 
             transaction {

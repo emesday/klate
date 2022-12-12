@@ -7,6 +7,7 @@ import emesday.klate.security.forms.*
 import emesday.klate.view.*
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.freemarker.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -30,16 +31,40 @@ open class AuthView : BaseView() {
     open suspend fun PipelineContext<Unit, ApplicationCall>.logout() {
     }
 
-    override fun routing(route: Route) {
-        route {
-            get("/login/") {
-                login()
-            }
+    final override fun Route.routing() = routing {
+        get("/login/") {
+            login()
+        }
+
+        authenticate("auth-form") {
             post("/login/") {
-                login()
+                call.respondText("Hello, ${call.principal<UserIdPrincipal>()?.name}!")
             }
-            get("/logout/") {
-                logout()
+        }
+
+        authenticate("auth-session") {
+            get("/hello") {
+                val userSession = call.principal<UserSession>()
+                call.sessions.set(userSession?.copy(count = userSession.count + 1))
+                call.respondText("Hello, ${userSession?.username}! Visit count is ${userSession?.count}.")
+            }
+        }
+
+        get("/logout/") {
+            call.sessions.clear<UserSession>()
+            call.respondRedirect("/login")
+        }
+    }
+
+    override fun initialize(application: Application): Unit = with(application) {
+        authentication {
+            session<UserSession>("auth-session") {
+                validate { session ->
+                    null
+                }
+                challenge {
+                    call.respondRedirect("/login/")
+                }
             }
         }
     }
@@ -56,7 +81,7 @@ class AuthDBView : AuthView() {
         val form = LoginFormDB()
         if (call.request.httpMethod == HttpMethod.Post) {
             with(application) {
-                securityManager
+                klate.securityManager
             }
         }
         return call.respond(FreeMarkerContent(loginTemplate, mapOf(
@@ -64,5 +89,25 @@ class AuthDBView : AuthView() {
             "form" to form,
             "klate" to application.environment.config.klate
         )))
+    }
+
+    override fun initialize(application: Application): Unit = with(application) {
+        super.initialize(application)
+        authentication {
+            form("auth-form") {
+                userParamName = "username"
+                passwordParamName = "password"
+                validate { credentials ->
+                    if (credentials.name == "jetbrains" && credentials.password == "foobar") {
+                        UserIdPrincipal(credentials.name)
+                    } else {
+                        null
+                    }
+                }
+                challenge {
+                    call.respondRedirect("/login/")
+                }
+            }
+        }
     }
 }

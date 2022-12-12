@@ -1,19 +1,27 @@
 package emesday.klate.security
 
+import emesday.klate.*
 import emesday.klate.config.*
+import emesday.klate.security.defaults.*
 import io.ktor.server.application.*
 import java.time.*
 
-abstract class BaseSecurityManager(
+abstract class BaseSecurityManager <
+        USER : UserItf<ROLE>,
+        ROLE : RoleItf,
+        PERMISSION: PermissionItf,
+        VIEW_MENU: ViewMenuItf,
+        PERMISSION_VIEW: PermissionViewItf<PERMISSION, VIEW_MENU>
+        >(
     application: Application,
 ) : AbstractSecurityManager(application) {
 
     // fun create_login_manager() required??
     // fun create_jwt_manager() required??
 
-    val builtinRoles: Map<String, ViewMenuApiAndPermissionPair>
+    val builtinRoles: Map<String, List<ViewMenuApiAndPermissionPair>>
 
-    fun createBuiltinRoles(): Map<String, ViewMenuApiAndPermissionPair> {
+    fun createBuiltinRoles(): Map<String, List<ViewMenuApiAndPermissionPair>> {
         return klate.app.roles
     }
 
@@ -26,8 +34,8 @@ abstract class BaseSecurityManager(
      * @param roleKeys0: the list of FAB role keys
      * @return: a list of RoleModelView
      */
-    fun getRolesFromKeys(roleKeys0: List<String>): Set<RoleItf> {
-        val roles = mutableSetOf<RoleItf>()
+    fun getRolesFromKeys(roleKeys0: List<String>): Set<ROLE> {
+        val roles = mutableSetOf<ROLE>()
         val roleKeys = roleKeys0.toMutableSet()
         for ((roleKey, klateRoleNames) in authRolesMapping) {
             if (roleKey in roleKeys) {
@@ -79,7 +87,7 @@ abstract class BaseSecurityManager(
 
     val authLdapSearch: String = klate.auth.ldap.search
 
-    val authldapSearchFilter: String = klate.auth.ldap.searchFilter
+    val authLdapSearchFilter: String = klate.auth.ldap.searchFilter
 
     val authLdapBindUser: String = klate.auth.ldap.bindUser
 
@@ -119,7 +127,7 @@ abstract class BaseSecurityManager(
 
     val oauthProviders: List<String> = klate.auth.oauth.providers
 
-    fun updateUserAuthStat(user: UserItf, success: Boolean = true) {
+    fun updateUserAuthStat(user: USER, success: Boolean = true) {
         user.mutate {
             if (success) {
                 loginCount += 1
@@ -133,13 +141,13 @@ abstract class BaseSecurityManager(
         updateUser(user)
     }
 
-    abstract fun <T> withUsers(block: Iterable<UserItf>.() -> T): T
+    abstract fun <T> withUsers(block: Iterable<USER>.() -> T): T
 
-    abstract fun authUserOAuth(userInfo: UserInfo): UserItf?
+    abstract fun authUserOAuth(userInfo: UserInfo): USER?
 
 
-    fun oauthCalculateUserRoles(userInfo: UserInfo): List<RoleItf> {
-        val userRoleObjects = mutableSetOf<RoleItf>()
+    fun oauthCalculateUserRoles(userInfo: UserInfo): Iterable<ROLE> {
+        val userRoleObjects = mutableSetOf<ROLE>()
 
         // apply AUTH_ROLES_MAPPING
         if (authRolesMapping.isNotEmpty()) {
@@ -169,9 +177,8 @@ abstract class BaseSecurityManager(
                 )
             }
         }
-        return userRoleObjects.toList()
+        return userRoleObjects
     }
-
 
     // ---------------------
     // PRIMITIVES FOR USERS
@@ -207,12 +214,12 @@ abstract class BaseSecurityManager(
     /**
      * Generic function find a user by it's username or email
      */
-    abstract fun findUser(username: String? = null, email: String? = null): UserItf?
+    abstract fun findUser(username: String? = null, email: String? = null): USER?
 
     /**
      * Generic function that returns all existing users
      */
-    abstract fun getAllUsers(): List<UserItf>
+    abstract fun getAllUsers(): List<USER>
 
     /**
      * Get all DB permissions from a role id
@@ -227,15 +234,15 @@ abstract class BaseSecurityManager(
         firstName: String,
         lastName: String,
         email: String,
-        roles: List<RoleItf>,
+        roles: Iterable<ROLE>,
         password: String = "",
-    ): UserItf?
+    ): USER?
 
     /**
      * Generic function to update user
      * @param user User model to update to database
      */
-    abstract fun updateUser(user: UserItf)
+    abstract fun updateUser(user: USER)
 
     /**
      * Generic function to count the existing users
@@ -246,13 +253,13 @@ abstract class BaseSecurityManager(
     // PRIMITIVES FOR ROLES
     // ----------------------
 
-    abstract fun findRole(role: String): RoleItf?
+    abstract fun findRole(role: String): ROLE?
 
-    abstract fun addRole(role: String): RoleItf?
+    abstract fun addRole(role: String, permissions: List<PERMISSION_VIEW>? = null): ROLE?
 
-    abstract fun updateRole(pk: String, name: String)
+    abstract fun updateRole(pk: Int, name: String)
 
-    abstract fun getAllRoles(): List<RoleItf>
+    abstract fun getAllRoles(): List<ROLE>
 
 
     // ----------------------------
@@ -339,7 +346,7 @@ abstract class BaseSecurityManager(
      * @param permissionName name of the permission to add: 'can_add','can_edit' etc...
      * @param viewMenuName name of the view menu to add
      */
-    abstract fun addPermissionViewMenu(permissionName: String, viewMenuName: String)
+    abstract fun addPermissionViewMenu(permissionName: String, viewMenuName: String): PERMISSION_VIEW
 
     abstract fun delPermissionViewMenu(permissionName: String, viewMenuName: String, cascade: Boolean = true)
 
@@ -386,8 +393,24 @@ abstract class BaseSecurityManager(
     /**
      * Setups the DB, creates admin and public roles if they don't exist.
      */
-    fun createDb() {
+    open fun createDB() {
         val rolesMapping = klate.app.rolesMapping
+        for ((pk, name) in rolesMapping) {
+            updateRole(pk, name)
+        }
+        for ((roleName, permissionViewMenus) in builtinRoles) {
+            val permissions = permissionViewMenus.map { (viewMenuName, permissionName) ->
+                addPermissionViewMenu(permissionName, viewMenuName)
+            }
+            addRole(roleName, permissions)
+        }
+        if (authRoleAdmin !in builtinRoles) {
+            addRole(authRoleAdmin)
+        }
+        addRole(authRolePublic)
+        if (countUsers() == 0) {
+            log.warn(LOGMSG_WAR_SEC_NO_USER)
+        }
     }
 
     init {

@@ -10,19 +10,19 @@ data class MockUser(
     override var failLoginCount: Int,
     override var lastLogin: LocalDateTime?,
     override var active: Boolean,
-    override var roles: List<RoleItf> = emptyList(),
+    override var roles: Iterable<RoleItf> = emptyList(),
     override var firstName: String = "",
     override var lastName: String = "",
     override var username: String = "",
     override var email: String = "",
-) : UserItf
+) : UserItf<RoleItf>
 
 class BaseSecurityManagerTest {
 
     @Test
     fun `first successful auth`() = testApplication {
         application {
-            val bsm = mockk<BaseSecurityManager>()
+            val bsm = mockk<BaseSecurityManager<UserItf<RoleItf>, RoleItf, *, *, *>>()
 
             every { bsm.updateUserAuthStat(any(), any()) } answers { callOriginal() }
             every { bsm.updateUser(any()) } returns Unit
@@ -43,7 +43,7 @@ class BaseSecurityManagerTest {
     @Test
     fun `first unsuccessful auth`() = testApplication {
         application {
-            val bsm = mockk<BaseSecurityManager>()
+            val bsm = mockk<BaseSecurityManager<UserItf<RoleItf>, RoleItf, *, *, *>>()
 
             every { bsm.updateUserAuthStat(any(), any()) } answers { callOriginal() }
             every { bsm.updateUser(any()) } returns Unit
@@ -65,7 +65,7 @@ class BaseSecurityManagerTest {
     @Test
     fun `subsequent successful auth`() = testApplication {
         application {
-            val bsm = mockk<BaseSecurityManager>()
+            val bsm = mockk<BaseSecurityManager<UserItf<RoleItf>, RoleItf, *, *, *>>()
 
             every { bsm.updateUserAuthStat(any(), any()) } answers { callOriginal() }
             every { bsm.updateUser(any()) } returns Unit
@@ -86,7 +86,7 @@ class BaseSecurityManagerTest {
     @Test
     fun `subsequent unsuccessful auth`() = testApplication {
         application {
-            val bsm = mockk<BaseSecurityManager>()
+            val bsm = mockk<BaseSecurityManager<UserItf<RoleItf>, RoleItf, *, *, *>>()
 
             every { bsm.updateUserAuthStat(any(), any()) } answers { callOriginal() }
             every { bsm.updateUser(any()) } returns Unit

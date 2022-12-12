@@ -2,7 +2,7 @@ package emesday.klate.api
 
 import emesday.klate.*
 
-open class Api : RoutableRoute() {
+abstract class Api : RoutableRoute() {
 
     var resourceName: String = javaClass.name.lowercase()
 
@@ -15,10 +15,4 @@ open class Api : RoutableRoute() {
         set(value) {
             super.routeBase = value
         }
-}
-
-fun createApi(
-    builder: Api.() -> Unit = {},
-): Api {
-    return Api().apply(builder)
 }

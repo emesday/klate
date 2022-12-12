@@ -1,3 +1,5 @@
 package emesday.klate.security
 
-data class UserSession(val username: String, val isAuthenticated: Boolean)
+import io.ktor.server.auth.*
+
+data class UserSession(val username: String, val isAuthenticated: Boolean, val count: Int) : Principal

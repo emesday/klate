@@ -21,15 +21,29 @@ class KlateApplicationConfigApp(
             ac.put(this.combine("addSecurityViews"), value)
         }
 
-    var roles: Map<String, ViewMenuApiAndPermissionPair> = emptyMap()
+    var roles: Map<String, List<ViewMenuApiAndPermissionPair>> = emptyMap()
 //        get() = mapGetter("roles")
 //        set(value) = mapSetter("roles", value)
 
-    var rolesMapping: Map<Int, String> = emptyMap()
-//        get() = mapGetter("rolesMapping")
-//        set(value) = mapSetter("rolesMapping", value)
+    var rolesMapping: Map<Int, String>
+        get() = getAsMap(
+            combine("rolesMapping"),
+            { it.toInt() }
+        ) { ac, fullPath ->
+            ac.tryGetString(fullPath)
+        }
+        set(value) {
+            setMapStringValues(
+                combine("rolesMapping"),
+                { it.toString() },
+                { it },
+                value
+            )
+        }
 
     var indexView: String?
         get() = ac.string(combine("indexView"))
         set(value) = ac.put(combine("indexView"), value)
+
+    val templateBasePackagePath: String? = null
 }
