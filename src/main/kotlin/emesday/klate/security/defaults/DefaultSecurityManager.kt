@@ -157,7 +157,7 @@ open class DefaultSecurityManager(application: Application) :
                 try {
                     val newRole = RoleEntity.new {
                         this.name = role
-//                        this.permissions = SizedCollection(perms)
+                        this.permissions = SizedCollection(perms)
                     }
                     commit()
                     newRole
