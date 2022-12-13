@@ -18,13 +18,13 @@ import kotlin.system.*
  */
 open class DefaultSecurityManager(application: Application) :
     BaseSecurityManager<
-            User,
-            Role,
-            Permission,
-            ViewMenu,
-            PermissionView>(application) {
+            UserEntity,
+            RoleEntity,
+            PermissionEntity,
+            ViewMenuEntity,
+            PermissionViewEntity>(application) {
 
-    override fun updateUser(user: User) {
+    override fun updateUser(user: UserEntity) {
         // required ?
     }
 
@@ -37,11 +37,11 @@ open class DefaultSecurityManager(application: Application) :
         firstName: String,
         lastName: String,
         email: String,
-        roles: Iterable<Role>,
+        roles: Iterable<RoleEntity>,
         password: String,
-    ): User? = run {
+    ): UserEntity? = run {
         val user = transaction {
-            User.new {
+            UserEntity.new {
                 this.firstName = firstName
                 this.lastName = lastName
                 this.username = username
@@ -61,11 +61,11 @@ open class DefaultSecurityManager(application: Application) :
         user
     }
 
-    override fun <T> withUsers(block: Iterable<User>.() -> T): T = transaction {
-        User.all().block()
+    override fun <T> withUsers(block: Iterable<UserEntity>.() -> T): T = transaction {
+        UserEntity.all().block()
     }
 
-    override fun authUserOAuth(userInfo: UserInfo): User? {
+    override fun authUserOAuth(userInfo: UserInfo): UserEntity? {
         val username = userInfo.username
             ?: userInfo.email
             ?: throw KlateException("OAUTH userinfo does not have username or email")
@@ -150,12 +150,12 @@ open class DefaultSecurityManager(application: Application) :
         TODO("Not yet implemented")
     }
 
-    override fun addRole(role: String, permissions: List<PermissionView>?): Role? {
+    override fun addRole(role: String, permissions: List<PermissionViewEntity>?): RoleEntity? {
         val perms = permissions ?: emptyList()
         return findRole(role)
             ?: transaction {
                 try {
-                    val newRole = Role.new {
+                    val newRole = RoleEntity.new {
                         this.name = role
 //                        this.permissions = SizedCollection(perms)
                     }
@@ -170,7 +170,7 @@ open class DefaultSecurityManager(application: Application) :
     }
 
     override fun updateRole(pk: Int, name: String): Unit = transaction {
-        val role = Role.findById(pk)
+        val role = RoleEntity.findById(pk)
         if (role != null) {
             try {
                 role.name = name
@@ -183,7 +183,7 @@ open class DefaultSecurityManager(application: Application) :
         }
     }
 
-    override fun getAllRoles(): List<Role> {
+    override fun getAllRoles(): List<RoleEntity> {
         TODO("Not yet implemented")
     }
 
@@ -239,23 +239,23 @@ open class DefaultSecurityManager(application: Application) :
         TODO("Not yet implemented")
     }
 
-    override fun findRole(role: String): Role? = transaction {
-        Role.find(Roles.name eq role).firstOrNull()
+    override fun findRole(role: String): RoleEntity? = transaction {
+        RoleEntity.find(Roles.name eq role).firstOrNull()
     }
 
-    override fun findUser(username: String?, email: String?): User? = transaction {
+    override fun findUser(username: String?, email: String?): UserEntity? = transaction {
         if (username != null) {
             if (authUsernameCI) {
-                User.find(
+                UserEntity.find(
                     Users.username.lowerCase() eq username.lowercase()
                 ).firstOrNull()
             } else {
-                User.find(
+                UserEntity.find(
                     Users.username eq username
                 ).firstOrNull()
             }
         } else if (email != null) {
-            User.find(
+            UserEntity.find(
                 Users.email eq email
             ).firstOrNull()
         } else {
@@ -263,7 +263,7 @@ open class DefaultSecurityManager(application: Application) :
         }
     }
 
-    override fun getAllUsers(): List<User> {
+    override fun getAllUsers(): List<UserEntity> {
         TODO("Not yet implemented")
     }
 
@@ -274,7 +274,7 @@ open class DefaultSecurityManager(application: Application) :
     override fun addPermissionViewMenu(
         permissionName: String,
         viewMenuName: String,
-    ): PermissionView {
+    ): PermissionViewEntity {
 
 
         //        if not (permission_name and view_menu_name):

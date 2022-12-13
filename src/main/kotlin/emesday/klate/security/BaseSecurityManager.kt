@@ -6,12 +6,12 @@ import emesday.klate.security.defaults.*
 import io.ktor.server.application.*
 import java.time.*
 
-abstract class BaseSecurityManager <
-        USER : UserItf<ROLE>,
-        ROLE : RoleItf,
-        PERMISSION: PermissionItf,
-        VIEW_MENU: ViewMenuItf,
-        PERMISSION_VIEW: PermissionViewItf<PERMISSION, VIEW_MENU>
+abstract class BaseSecurityManager<
+        USER : User<ROLE>,
+        ROLE : Role,
+        PERMISSION : Permission,
+        VIEW_MENU : ViewMenu,
+        PERMISSION_VIEW : PermissionView<PERMISSION, VIEW_MENU>,
         >(
     application: Application,
 ) : AbstractSecurityManager(application) {

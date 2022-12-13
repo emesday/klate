@@ -473,14 +473,14 @@ class OAuthTest {
 
             val role = klate.securityManager.findRole("User")
             transaction {
-                if (role != null && role is Role) {
+                if (role != null && role is RoleEntity) {
                     role.delete()
                 }
             }
 
             klate.securityManager.findUser(userInfoAlice.username!!)?.let { user ->
                 transaction {
-                    if (user is User) {
+                    if (user is UserEntity) {
                         user.delete()
                     }
                 }
@@ -491,7 +491,7 @@ class OAuthTest {
     }
 }
 
-fun BaseSecurityManager<out UserItf<*>, out RoleItf, *, *, *>.assertOnlyDefaultUsers() {
+fun BaseSecurityManager<out User<*>, out Role, *, *, *>.assertOnlyDefaultUsers() {
     val userNames = withUsers {
         map { it.username }
     }

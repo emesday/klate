@@ -20,7 +20,7 @@ class ModelTest {
             createDefaultSecurityManagerTables()
 
             val user = transaction {
-                User.new {
+                UserEntity.new {
                     firstName = ""
                     lastName = ""
                     username = "alice"
@@ -33,7 +33,7 @@ class ModelTest {
                 }
             }
             val role = transaction {
-                Role.new {
+                RoleEntity.new {
                     name = "Public"
                 }
             }

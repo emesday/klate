@@ -12,11 +12,11 @@ import io.ktor.util.*
 
 class KlatePluginInstance(
     val securityManager: BaseSecurityManager<
-            out UserItf<RoleItf>,
-            out RoleItf,
-            out PermissionItf,
-            out ViewMenuItf,
-            out PermissionViewItf<PermissionItf, ViewMenuItf>>,
+            out User<Role>,
+            out Role,
+            out Permission,
+            out ViewMenu,
+            out PermissionView<Permission, ViewMenu>>,
     val indexView: BaseView
 ) {
 
