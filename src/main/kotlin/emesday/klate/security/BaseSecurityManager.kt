@@ -3,6 +3,7 @@ package emesday.klate.security
 import emesday.klate.*
 import emesday.klate.config.*
 import emesday.klate.security.defaults.*
+import emesday.klate.security.views.*
 import io.ktor.server.application.*
 import java.time.*
 
@@ -415,5 +416,13 @@ abstract class BaseSecurityManager<
 
     init {
         builtinRoles = createBuiltinRoles()
+    }
+
+    val authView: AuthView = when (authType) {
+        AuthType.OID -> AuthDBView()
+        AuthType.DB -> AuthDBView()
+        AuthType.LDAP -> AuthDBView()
+        AuthType.REMOTE_USER -> AuthDBView()
+        AuthType.OAUTH -> AuthDBView()
     }
 }
