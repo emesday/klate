@@ -2,6 +2,7 @@ package emesday.klate
 
 import emesday.klate.config.*
 import emesday.klate.security.*
+import emesday.klate.security.defaults.*
 import io.ktor.server.config.*
 import io.ktor.server.engine.*
 import io.ktor.server.testing.*
@@ -34,14 +35,11 @@ fun ApplicationEngineEnvironmentBuilder.buildEnvironment(block: MapApplicationCo
     this.config = config
 }
 
-fun <USER : User<ROLE>,
-        ROLE : Role,
-        PERMISSION: Permission,
-        VIEW_MENU: ViewMenu,
-        PERMISSION_VIEW: PermissionView<PERMISSION, VIEW_MENU>>
-        BaseSecurityManager<USER, ROLE, PERMISSION, VIEW_MENU, PERMISSION_VIEW>.addTestUsersAndRoles() {
-    val adminRole = addRole("Admin")
-    val publicRole = addRole("Public")
-    addUser(USERNAME_ADMIN, "", "", "admin@example.com", listOfNotNull(adminRole), PASSWORD_ADMIN)
-    addUser(USERNAME_READONLY, "", "", "readonly@example.com", listOfNotNull(publicRole), PASSWORD_READONLY)
+fun BaseSecurityManager<*, *, *, *, *>.addTestUsersAndRoles() {
+    if (this is DefaultSecurityManager) {
+        val adminRole = addRole("Admin")
+        val publicRole = addRole("Public")
+        addUser(USERNAME_ADMIN, "", "", "admin@example.com", listOfNotNull(adminRole), PASSWORD_ADMIN)
+        addUser(USERNAME_READONLY, "", "", "readonly@example.com", listOfNotNull(publicRole), PASSWORD_READONLY)
+    }
 }

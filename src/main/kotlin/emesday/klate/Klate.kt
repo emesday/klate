@@ -12,8 +12,8 @@ import io.ktor.util.*
 
 class KlatePluginInstance(
     val securityManager: BaseSecurityManager<
-            out User<Role>,
-            out Role,
+            out User<Role<PermissionView<Permission, ViewMenu>>>,
+            out Role<PermissionView<Permission, ViewMenu>>,
             out Permission,
             out ViewMenu,
             out PermissionView<Permission, ViewMenu>>,

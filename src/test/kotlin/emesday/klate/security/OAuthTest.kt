@@ -491,7 +491,7 @@ class OAuthTest {
     }
 }
 
-fun BaseSecurityManager<out User<*>, out Role, *, *, *>.assertOnlyDefaultUsers() {
+fun BaseSecurityManager<*, *, *, *, *>.assertOnlyDefaultUsers() {
     val userNames = withUsers {
         map { it.username }
     }

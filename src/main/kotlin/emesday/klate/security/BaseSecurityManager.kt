@@ -7,8 +7,8 @@ import io.ktor.server.application.*
 import java.time.*
 
 abstract class BaseSecurityManager<
-        USER : User<ROLE>,
-        ROLE : Role,
+        USER : User<Role<PERMISSION_VIEW>>,
+        ROLE : Role<PERMISSION_VIEW>,
         PERMISSION : Permission,
         VIEW_MENU : ViewMenu,
         PERMISSION_VIEW : PermissionView<PERMISSION, VIEW_MENU>,

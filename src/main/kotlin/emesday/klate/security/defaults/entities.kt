@@ -18,11 +18,11 @@ class ViewMenuEntity(id: EntityID<Int>) : IntEntity(id), ViewMenu {
     override var name by ViewMenus.name
 }
 
-class RoleEntity(id: EntityID<Int>) : IntEntity(id), Role {
+class RoleEntity(id: EntityID<Int>) : IntEntity(id), Role<PermissionViewEntity> {
     companion object : IntEntityClass<RoleEntity>(Roles)
 
     override var name by Roles.name
-    var permissions by PermissionViewEntity via PermissionViewRoles
+    override var permissions by PermissionViewEntity via PermissionViewRoles
 
     override fun toString(): String = transaction {
         "Role(name='$name')"

@@ -12,7 +12,13 @@ class KlateConfig {
 
     lateinit var application: Application
 
-    var securityManager: BaseSecurityManager<out User<*>, out Role, out Permission, out ViewMenu, out PermissionView<Permission, ViewMenu>>? = null
+    var securityManager: BaseSecurityManager<
+            out User<Role<PermissionView<Permission, ViewMenu>>>,
+            out Role<PermissionView<Permission, ViewMenu>>,
+            out Permission,
+            out ViewMenu,
+            out PermissionView<Permission, ViewMenu>
+            >? = null
         get() {
             val securityManager = field ?: with(application) {
                 DefaultSecurityManager(this)

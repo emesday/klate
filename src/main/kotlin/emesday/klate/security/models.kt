@@ -15,15 +15,16 @@ interface PermissionView <out PERMISSION : Permission, out VIEW_MENU : ViewMenu>
     val viewMenu: VIEW_MENU
 }
 
-interface Role {
+interface Role <out PERMISSION_VIEW: PermissionView<Permission, ViewMenu>> {
     var name: String
+    val permissions: Iterable<PERMISSION_VIEW>
 
-    fun <T> mutate(block: Role.() -> T) {
+    fun <T> mutate(block: Role<PERMISSION_VIEW>.() -> T) {
         block(this)
     }
 }
 
-interface User <out ROLE : Role> {
+interface User <out ROLE : Role<PermissionView<Permission, ViewMenu>>> {
 
     var firstName: String
 
