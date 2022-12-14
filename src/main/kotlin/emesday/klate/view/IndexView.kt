@@ -6,7 +6,7 @@ import io.ktor.server.freemarker.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-open class IndexView : BaseView() {
+open class IndexView : KlateView() {
 
     override var routeBase: String? = ""
 
@@ -14,7 +14,7 @@ open class IndexView : BaseView() {
 
     open val indexTemplate = "appbuilder/index.ftl"
 
-    override fun Route.routing() = routing {
+    fun index() = routing {
         get {
             call.respond(
                 FreeMarkerContent(indexTemplate, Context("value"))

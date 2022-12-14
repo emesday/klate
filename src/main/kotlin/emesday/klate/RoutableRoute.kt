@@ -24,6 +24,6 @@ abstract class RoutableRoute {
     open fun initialize(application: Application) {}
 }
 
-fun Route.register(baseView: RoutableRoute): Route {
+fun Route.configure(baseView: RoutableRoute): Route {
     return baseView.register(this)
 }

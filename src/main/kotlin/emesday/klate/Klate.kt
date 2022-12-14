@@ -17,7 +17,7 @@ class KlatePluginInstance(
             out Permission,
             out ViewMenu,
             out PermissionView<Permission, ViewMenu>>,
-    val indexView: BaseView
+    val indexView: KlateView
 ) {
 
     val baseViews: MutableList<BaseView> = mutableListOf(AuthDBView())
@@ -41,10 +41,10 @@ val Klate = createApplicationPlugin("Klate", { KlateConfig() }) {
             config.indexView!!
         )
 
+        configure(klatePluginInstance.indexView)
         routing {
-            register(klatePluginInstance.indexView)
             for (view in klatePluginInstance.baseViews) {
-                register(view)
+                configure(view)
             }
         }
 

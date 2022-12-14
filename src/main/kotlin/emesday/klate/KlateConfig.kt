@@ -27,11 +27,11 @@ class KlateConfig {
             return field
         }
 
-    var indexView: BaseView? = null
+    var indexView: KlateView? = null
         get() {
             field = field ?: with(application) {
                 ac.klate.app.indexView?.let {
-                    Class.forName(it).kotlin.createInstance() as BaseView
+                    Class.forName(it).kotlin.createInstance() as KlateView
                 } ?: IndexView()
             }
             return field
