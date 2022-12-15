@@ -425,4 +425,6 @@ abstract class BaseSecurityManager<
         AuthType.REMOTE_USER -> AuthDBView()
         AuthType.OAUTH -> AuthDBView()
     }
+
+    val urlForRegisterUser = ""
 }

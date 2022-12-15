@@ -6,9 +6,7 @@ import io.ktor.util.*
 
 abstract class KlateModule {
 
-    private var built = false
-
-    open var routeBase: String? = null
+    private var configured = false
 
     @KtorDsl
     fun application(block: Application.() -> Unit): Application.() -> Unit = block
@@ -17,10 +15,10 @@ abstract class KlateModule {
     fun routing(block: Route.() -> Unit): Route.() -> Unit = block
 
     fun configure(application: Application) {
-        checkNotBuilt()
+        checkNotConfigured()
         configureApplication(application)
         configureRouting(application)
-        built = true
+        configured = true
     }
 
     private fun configureApplication(application: Application) {
@@ -47,8 +45,8 @@ abstract class KlateModule {
         }
     }
 
-    private fun checkNotBuilt() {
-        check(!built) {
+    private fun checkNotConfigured() {
+        check(!configured) {
             "KlateModule already initialized."
         }
     }

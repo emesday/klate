@@ -46,4 +46,22 @@ class KlateApplicationConfigApp(
         set(value) = ac.put(combine("indexView"), value)
 
     val templateBasePackagePath: String? = null
+
+    var baseTemplate: String
+        get() = ac.string(combine("baseTemplate")) ?: "baselayout.ftl"
+        set(value) {
+            ac.put(combine("baseTemplate"), value)
+        }
+
+    var staticUrlPath: String
+        get() = ac.string(combine("staticUrlPath")) ?: "static/appbuilder"
+        set(value) {
+            ac.put(combine("staticUrlPath"), value)
+        }
+
+    var theme: String
+        get() = ac.string(combine("theme")) ?: "amelia"
+        set(value) {
+            ac.put(combine("theme"), value)
+        }
 }

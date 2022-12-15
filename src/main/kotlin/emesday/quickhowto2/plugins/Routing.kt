@@ -96,7 +96,7 @@ fun Application.configureRouting() {
 
     routing {
         static("/static") {
-            resources("files")
+            resources("static")
         }
         get("/") {
             call.respond(

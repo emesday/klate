@@ -42,21 +42,13 @@ fun Application.module() {
             transform(SessionTransportTransformerMessageAuthentication(hashKey))
         }
     }
-    install(ContentNegotiation) {
-        json()
-    }
+//    install(ContentNegotiation) {
+//        json()
+//    }
 
     install(Klate)
 
 //    routing {
-//        get("debug") {
-//
-//        }
-//        static("/static") {
-//            staticBasePackage = "files"
-//            resources(".")
-//        }
-//
 //        hello()
 //        links()
 //

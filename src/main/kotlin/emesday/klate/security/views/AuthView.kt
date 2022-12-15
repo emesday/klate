@@ -2,9 +2,9 @@ package emesday.klate.security.views
 
 import emesday.klate.*
 import emesday.klate.config.*
+import emesday.klate.form.*
 import emesday.klate.security.*
 import emesday.klate.security.forms.*
-import emesday.klate.view.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -15,25 +15,17 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.util.pipeline.*
 
-open class AuthView : BaseView() {
-
-    override var routeBase: String? = ""
-
-    open var loginTemplate: String = ""
+abstract class AuthView : KlateView() {
 
     open val invalidLoginMessage: String = "Invalid login. Please try again."
 
     open val title: String = "Sign In"
 
-    open suspend fun PipelineContext<Unit, ApplicationCall>.login() {
-    }
+    abstract suspend fun PipelineContext<Unit, ApplicationCall>.loginView()
 
-    open suspend fun PipelineContext<Unit, ApplicationCall>.logout() {
-    }
-
-    final override fun Route.routing() = routing {
+    open fun auth() = routing {
         get("/login/") {
-            login()
+            loginView()
         }
 
         authenticate("auth-form") {
@@ -56,7 +48,7 @@ open class AuthView : BaseView() {
         }
     }
 
-    override fun initialize(application: Application): Unit = with(application) {
+    fun initializeSession() = application {
         authentication {
             session<UserSession>("auth-session") {
                 validate { session ->
@@ -71,28 +63,17 @@ open class AuthView : BaseView() {
 }
 
 class AuthDBView : AuthView() {
-    override var loginTemplate: String = "appbuilder/general/security/login_db.html"
+    var loginTemplate: String = "appbuilder/general/security/login_db.ftl"
 
-    override suspend fun PipelineContext<Unit, ApplicationCall>.login() {
-        val session = call.sessions.get<UserSession>()
-        if (session != null && session.isAuthenticated) {
-            return call.respondRedirect("index")
-        }
-        val form = LoginFormDB()
-        if (call.request.httpMethod == HttpMethod.Post) {
-            with(application) {
-                klate.securityManager
-            }
-        }
+    override suspend fun PipelineContext<Unit, ApplicationCall>.loginView() {
+        val form = LoginForm()
         return call.respond(FreeMarkerContent(loginTemplate, mapOf(
             "title" to title,
-            "form" to form,
-            "klate" to application.environment.config.klate
+            "form" to form
         )))
     }
 
-    override fun initialize(application: Application): Unit = with(application) {
-        super.initialize(application)
+    fun initializeDBAuth() = application {
         authentication {
             form("auth-form") {
                 userParamName = "username"
