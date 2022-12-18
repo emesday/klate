@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="klate" type="emesday.klate.KlateSharedTemplateModel" -->
+<#-- @ftlvariable name="klate" type="emesday.klate.freemarker.KlateTemplateModel" -->
 <#-- @ftlvariable name="title" type="String" -->
 <#-- @ftlvariable name="form" type="emesday.klate.form.LoginForm" -->
 
