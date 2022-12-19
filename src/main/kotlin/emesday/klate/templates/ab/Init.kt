@@ -1,30 +1,10 @@
-package emesday.klate.templates
+package emesday.klate.templates.ab
 
-import emesday.klate.templates.general.*
+import emesday.klate.templates.*
 import io.ktor.server.html.*
 import kotlinx.html.*
 
-class KlateContext {
-    val appName: String = ""
-    val title: String = ""
-    fun static(path: String) = path
-    fun i18n(text: String): String {
-        return text
-    }
-
-    val appTheme: String? = null
-}
-
-/**
- * insert with default
- */
-fun <TOuter> TOuter.insert(
-    placeholder: Placeholder<TOuter>,
-    meta: String = "",
-    defaultContent: TOuter.(Placeholder<TOuter>) -> Unit,
-): Unit = insert(placeholder.apply { invoke(meta, defaultContent) })
-
-open class Init(val ctx: KlateContext) : Template<HTML> {
+abstract class Init : KlateTemplate {
 
     val pageTitle = Placeholder<TITLE>()
     val headMeta = Placeholder<HEAD>()
@@ -35,7 +15,7 @@ open class Init(val ctx: KlateContext) : Template<HTML> {
     val addTailJs = Placeholder<FlowContent>()
     val tail = Placeholder<FlowContent>()
 
-    override fun HTML.apply() {
+    override fun template(ctx: KlateContext, outer: HTML) = with(outer) {
         head {
             title {
                 insert(pageTitle) {
@@ -74,18 +54,6 @@ open class Init(val ctx: KlateContext) : Template<HTML> {
             }
             insert(addTailJs)
             insert(tail)
-        }
-    }
-}
-
-
-open class BaseLayout(ctx: KlateContext) : Init(ctx) {
-
-    val confirm = TemplatePlaceholder<Confirm>()
-
-    init {
-        body {
-            insert(Confirm(ctx), confirm)
         }
     }
 }

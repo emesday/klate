@@ -1,15 +1,12 @@
 package emesday.klate.security.views
 
 import emesday.klate.*
-import emesday.klate.config.*
 import emesday.klate.form.*
 import emesday.klate.security.*
-import emesday.klate.security.forms.*
-import io.ktor.http.*
+import emesday.klate.templates.*
+import emesday.klate.templates.ab.general.security.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.freemarker.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
@@ -63,14 +60,11 @@ abstract class AuthView : KlateView() {
 }
 
 class AuthDBView : AuthView() {
-    var loginTemplate: String = "appbuilder/general/security/login_db.ftl"
 
     override suspend fun PipelineContext<Unit, ApplicationCall>.loginView() {
-        val form = LoginForm()
-        return call.respond(FreeMarkerContent(loginTemplate, mapOf(
-            "title" to title,
-            "form" to form
-        )))
+        return call.respondKlateTemplate(LoginDB(LoginForm())) {
+            title = this@AuthDBView.title
+        }
     }
 
     fun initializeDBAuth() = application {

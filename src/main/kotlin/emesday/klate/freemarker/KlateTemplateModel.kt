@@ -2,32 +2,7 @@ package emesday.klate.freemarker
 
 import emesday.klate.*
 import emesday.klate.config.*
-import freemarker.template.*
 import io.ktor.server.application.*
-
-fun <T> singleSimpleScalarParamMethod(
-    block: (String) -> T,
-) = TemplateMethodModelEx { args ->
-    val arg = args.first() ?: throw TemplateModelException("wrong arguments")
-    when (arg) {
-        is SimpleScalar -> block(arg.asString)
-        else -> throw TemplateModelException("wrong arguments")
-    }
-}
-
-fun <T> doubleSimpleScalaParamMethod(
-    block: (String, String) -> T,
-) = TemplateMethodModelEx { args ->
-    val firstArg = args[0] ?: throw TemplateModelException("wrong arguments")
-    val secondArg = args[1] ?: throw TemplateModelException("wrong arguments")
-
-    when {
-        firstArg is SimpleScalar && secondArg is SimpleScalar -> {
-            block(firstArg.asString, secondArg.asString)
-        }
-        else -> throw TemplateModelException("wrong arguments")
-    }
-}
 
 class KlateTemplateModel(application: Application) {
 
@@ -45,11 +20,11 @@ class KlateTemplateModel(application: Application) {
 
     val appTheme = config.klate.app.theme
 
-    val `_` = singleSimpleScalarParamMethod { translate(it) }
+//    val `_` = singleSimpleScalarParamMethod { translate(it) }
 
-    val urlFor = singleSimpleScalarParamMethod { urlFor(it) }
+//    val urlFor = singleSimpleScalarParamMethod { urlFor(it) }
 
-    val static = singleSimpleScalarParamMethod { "$statisUrlPath/$it" }
+//    val static = singleSimpleScalarParamMethod { "$statisUrlPath/$it" }
 
     val securityManager = application.klate.securityManager
 }

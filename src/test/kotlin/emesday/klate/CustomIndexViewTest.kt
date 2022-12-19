@@ -1,6 +1,7 @@
 package emesday.klate
 
 import emesday.klate.config.*
+import emesday.klate.templates.*
 import emesday.klate.view.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -10,7 +11,7 @@ import io.ktor.server.testing.*
 import kotlin.test.*
 
 class CustomIndexView : IndexView() {
-    override val indexTemplate: String = "custom_index.ftl"
+    override fun createIndexTemplate(): KlateTemplate = CustomIndex()
 }
 
 class CustomIndexViewTest {
@@ -26,6 +27,6 @@ class CustomIndexViewTest {
 
         val response = client.get("")
         assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals("This is a custom index view.", response.bodyAsText())
+        assertContains(response.bodyAsText(), "This is a custom index view.")
     }
 }
