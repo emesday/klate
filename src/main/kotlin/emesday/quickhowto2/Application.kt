@@ -1,13 +1,8 @@
 package emesday.quickhowto2
 
 import emesday.klate.*
-import emesday.klate.templates.*
-import emesday.klate.templates.ab.*
 import emesday.quickhowto2.dao.*
 import io.ktor.server.application.*
-import io.ktor.server.html.*
-import io.ktor.server.http.content.*
-import io.ktor.server.routing.*
 import io.ktor.util.*
 
 val hashKey = hex("6819b57a326945c1968f45236589")
@@ -25,11 +20,6 @@ fun Application.module() {
 //    install(ConditionalHeaders)
 //    install(PartialContent)
 //    install(Resources)
-//    install(Sessions) {
-//        cookie<Session>("SESSION") {
-//            transform(SessionTransportTransformerMessageAuthentication(hashKey))
-//        }
-//    }
 //    install(ContentNegotiation) {
 //        json()
 //    }

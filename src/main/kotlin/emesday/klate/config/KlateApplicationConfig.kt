@@ -68,13 +68,13 @@ internal fun KlateApplicationConfigChild.mapSetter(subPath: String, value: Map<S
 
 internal fun <V> KlateApplicationConfigChild.getAsMap(
     path: String,
-    getValue: (ApplicationConfig, String) -> V?
+    getValue: (ApplicationConfig, String) -> V?,
 ): Map<String, V> = getAsMap(path, { it }, getValue)
 
 internal fun <K, V> KlateApplicationConfigChild.getAsMap(
     path: String,
     getKey: (String) -> K?,
-    getValue: (ApplicationConfig, String) -> V?
+    getValue: (ApplicationConfig, String) -> V?,
 ): Map<K, V> {
     return ac.keys()
         .filter { it.startsWith(path) }
@@ -94,7 +94,7 @@ internal fun <K, V> KlateApplicationConfigChild.setMapStringValues(
     path: String,
     getKey: (K) -> String,
     getValue: (V) -> String,
-    value: Map<K, V>
+    value: Map<K, V>,
 ) {
 
     for ((k, v) in value) {
@@ -106,7 +106,7 @@ internal fun <K, V> KlateApplicationConfigChild.setMapListValues(
     path: String,
     getKey: (K) -> String,
     getValue: (V) -> Iterable<String>,
-    value: Map<K, V>
+    value: Map<K, V>,
 ) {
 
     for ((k, v) in value) {

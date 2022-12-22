@@ -19,7 +19,7 @@ class KlatePluginInstance(
             out ViewMenu,
             out PermissionView<Permission, ViewMenu>>,
     val indexView: KlateView,
-    val config: KlateApplicationConfig
+    val config: KlateApplicationConfig,
 ) {
 
     val baseViews: MutableList<KlateView> = mutableListOf(AuthDBView())

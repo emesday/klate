@@ -57,7 +57,7 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id), User<RoleEntity> {
     override var firstName by Users.firstName
     override var lastName by Users.lastName
     override var username by Users.username
-    var password by Users.password
+    override var password by Users.password
     override var active by Users.active
 
     override var email by Users.email

@@ -1,83 +1,66 @@
 package emesday.klate.form
 
-import io.ktor.server.html.*
+import io.ktor.server.application.*
 import kotlinx.html.*
-import kotlinx.html.attributes.*
-import kotlinx.html.dom.*
-import kotlinx.html.stream.*
-import org.jetbrains.exposed.exceptions.*
-import org.jetbrains.exposed.sql.*
 
-open class Widget
+interface Field {
 
-abstract class Input(
-    val inputType: String,
-    val validationAttrs: List<String> = listOf("required")
-): Widget() {
+    val name: String
 
-    open operator fun invoke() {
-    }
+    fun render(
+        content: FlowOrInteractiveOrPhrasingContent,
+        block: INPUT.() -> Unit,
+    )
 }
 
-/**
- * Render a single-line text input.
- */
-class TextInput : Input(
-    "text",
-    listOf("required", "maxlength", "minlength", "pattern")
-)
+class StringField(
+    override val name: String,
+    val label: String,
+    val validators: List<Any>,
+) : Field {
 
-abstract class Field<T> {
-
-    abstract val widget: Widget
-
-    var data: T? = null
-
-    open fun processFormData(valueList: List<T>) {
-        if (valueList.isNotEmpty()) {
-            data = valueList.first()
+    override fun render(
+        content: FlowOrInteractiveOrPhrasingContent,
+        block: INPUT.() -> Unit,
+    ) {
+        content.textInput {
+            name = this@StringField.name
+            block()
         }
     }
 }
 
-open class StringField : Field<String>() {
-
-    override val widget: Widget = TextInput()
-
-    protected open val value: String
-        get() = data ?: ""
+class PasswordField(
+    override val name: String,
+    val label: String,
+    val validators: List<Any>,
+) : Field {
+    override fun render(
+        content: FlowOrInteractiveOrPhrasingContent,
+        block: INPUT.() -> Unit,
+    ) {
+        content.passwordInput {
+            name = this@PasswordField.name
+            block()
+        }
+    }
 }
+
 
 open class Form {
 
-    fun hiddenTag(form: FORM): Unit = with(form) {
-    }
-
-//    private val _columns = mutableListOf<Column<*>>()
-
-//    private fun MutableList<Column<*>>.addColumn(column: Column<*>) {
-//        if (this.any { it.name == column.name }) {
-//            throw DuplicateColumnException(column.name, tableName)
-//        }
-//        this.add(column)
-//    }
-
-//    fun <T> registerField(name: String, type: IColumnType): Column<T> = Column<T>(this, name, type).also { _columns.addColumn(it) }
-
-    fun string(name: String, label: String, validators: List<Any> = emptyList()): Placeholder<INPUT> = Placeholder()
-    fun password(name: String, label: String, validators: List<Any> = emptyList()): Placeholder<INPUT> = Placeholder()
+    fun string(name: String, label: String, validators: List<Any> = emptyList()) = StringField(name, label, validators)
+    fun password(name: String, label: String, validators: List<Any> = emptyList()) =
+        PasswordField(name, label, validators)
 
     val errors: Map<String, List<String>> = emptyMap()
+
+    fun validate(call: ApplicationCall) {}
 }
 
-class LoginForm : Form() {
-    fun FlowOrInteractiveOrPhrasingContent.username(block: INPUT.() -> Unit): Unit = input {
-        type = InputType.text
-        block()
-    }
+object LoginForm : Form() {
 
-    fun FlowOrInteractiveOrPhrasingContent.password(block: INPUT.() -> Unit): Unit = input {
-        type = InputType.password
-        block()
-    }
+    val username = string("username", "User name")
+
+    val password = password("password", "Password")
 }

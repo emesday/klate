@@ -7,6 +7,8 @@ val h2_version: String by project
 
 val mockk_version: String by project
 
+val password4j_version: String by project
+
 plugins {
     application
     kotlin("jvm") version "1.7.21"
@@ -44,6 +46,7 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
     implementation("io.ktor:ktor-server-sessions:$ktor_version")
     implementation("io.ktor:ktor-server-html-builder:$ktor_version")
+    implementation("com.password4j:password4j:$password4j_version")
 
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")

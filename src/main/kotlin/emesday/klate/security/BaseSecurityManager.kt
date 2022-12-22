@@ -1,5 +1,6 @@
 package emesday.klate.security
 
+import com.password4j.*
 import emesday.klate.*
 import emesday.klate.config.*
 import emesday.klate.security.defaults.*
@@ -15,7 +16,7 @@ abstract class BaseSecurityManager<
         PERMISSION_VIEW : PermissionView<PERMISSION, VIEW_MENU>,
         >(
     application: Application,
-) : AbstractSecurityManager(application) {
+) : AbstractSecurityManager<USER>(application) {
 
     // fun create_login_manager() required??
     // fun create_jwt_manager() required??
@@ -146,6 +147,44 @@ abstract class BaseSecurityManager<
 
     abstract fun authUserOAuth(userInfo: UserInfo): USER?
 
+    /**
+     *
+     * Method for authenticating user, auth db style
+     *
+     * @param username The username or registered email address
+     * @param password The password, will be tested against hashed password on db
+     */
+    fun authUserDB(username: String, password: String): USER? {
+        if (username == "") {
+            return null
+        }
+        val firstUser = getFirstUser()
+        var user = findUser(username = username)
+        if (user == null) {
+            user = findUser(email = username)
+        } else {
+            // Balance failure and success
+            findUser(email = username)
+        }
+
+        if (user == null || !user.active) {
+            // Balance failure and success
+            Password.check("password", "").withBcrypt()
+            log.info(LOGMSG_WAR_SEC_LOGIN_FAILED.format(username))
+            // Balance failure and success
+            if (firstUser != null) {
+                noopUserUpdate(firstUser)
+            }
+            return null
+        } else if (Password.check(password, user.password ?: "").withBcrypt()) {
+            updateUserAuthStat(user, true)
+            return user
+        } else {
+            updateUserAuthStat(user, false)
+            log.info(LOGMSG_WAR_SEC_LOGIN_FAILED.format(username))
+            return null
+        }
+    }
 
     fun oauthCalculateUserRoles(userInfo: UserInfo): Iterable<ROLE> {
         val userRoleObjects = mutableSetOf<ROLE>()

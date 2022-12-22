@@ -9,7 +9,7 @@ class Flash(val ctx: KlateContext) : Template<FlowContent> {
     override fun FlowContent.apply() {
         ctx.getFlashedMessagesWithCategory()?.let {
             for ((category, m) in it) {
-                val additionalClass =if (category != null) {
+                val additionalClass = if (category != null) {
                     "alert-$category"
                 } else {
                     "alert-info"

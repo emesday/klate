@@ -22,7 +22,7 @@ class LoginDB(val form: LoginForm) : Base() {
                             }
                         }
                         div("panel-body") {
-                            style="padding-top: 30px;"
+                            style = "padding-top: 30px;"
                             form(action = "", classes = "form", method = FormMethod.post) {
                                 name = "login"
                                 form.hiddenTag(this)
@@ -44,12 +44,10 @@ class LoginDB(val form: LoginForm) : Base() {
                                             span("input-group-addon") {
                                                 i("fa fa-user")
                                             }
-                                            with(form) {
-                                                username {
-                                                    size = "80"
-                                                    classes = setOf("form-control")
-                                                    autoFocus = true
-                                                }
+                                            render(form.username) {
+                                                size = "80"
+                                                classes = setOf("form-control")
+                                                autoFocus = true
                                             }
                                         }
                                         for (error in form.errors.getOrDefault("openid", emptyList())) {
@@ -66,11 +64,9 @@ class LoginDB(val form: LoginForm) : Base() {
                                             span("input-group-addon") {
                                                 i("fa fa-key")
                                             }
-                                            with(form) {
-                                                password {
-                                                    size = "80"
-                                                    classes = setOf("form-control")
-                                                }
+                                            render(form.password) {
+                                                size = "80"
+                                                classes = setOf("form-control")
                                             }
                                         }
                                         for (error in form.errors.getOrDefault("openid", emptyList())) {

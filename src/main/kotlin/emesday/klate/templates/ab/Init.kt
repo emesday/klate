@@ -47,10 +47,10 @@ abstract class Init : KlateTemplate {
         body {
             insert(body)
             insert(tailJs) {
-                script(src=ctx.static("js/bootstrap.min.js")) {}
-                script(src=ctx.static("datepicker/bootstrap-datepicker.js")) {}
-                script(src=ctx.static("select2/select2.js")) {}
-                script(src=ctx.static("js/ab.js")) {}
+                script(src = ctx.static("js/bootstrap.min.js")) {}
+                script(src = ctx.static("datepicker/bootstrap-datepicker.js")) {}
+                script(src = ctx.static("select2/select2.js")) {}
+                script(src = ctx.static("js/ab.js")) {}
             }
             insert(addTailJs)
             insert(tail)

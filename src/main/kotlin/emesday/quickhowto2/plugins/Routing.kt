@@ -1,10 +1,5 @@
 package emesday.quickhowto2.plugins
 
-import io.ktor.server.application.*
-import io.ktor.server.http.content.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-
 inline fun <reified T> String.convertTo(): T {
     return when (T::class) {
         Int::class -> toInt()

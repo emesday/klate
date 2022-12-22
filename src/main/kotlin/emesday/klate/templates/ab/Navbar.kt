@@ -27,7 +27,7 @@ class Navbar(val ctx: KlateContext) : Template<FlowContent> {
                     if (ctx.appIcon != null) {
                         a(ctx.indexUrl) {
                             classes = setOf("navbar-brand")
-                            img(src=ctx.appIcon) {
+                            img(src = ctx.appIcon) {
                                 height = "100%"
                                 width = "auto"
                             }
@@ -45,7 +45,7 @@ class Navbar(val ctx: KlateContext) : Template<FlowContent> {
                         insert(NavbarMenu(ctx), navbarMenu)
                     }
                     ul("nav navbar-nav navbar-right") {
-                       insert(NavbarRight(ctx), navbarRight)
+                        insert(NavbarRight(ctx), navbarRight)
                     }
                 }
             }

@@ -350,12 +350,14 @@ open class DefaultSecurityManager(application: Application) :
         TODO("Not yet implemented")
     }
 
-    override fun getFirstUser() {
-        TODO("Not yet implemented")
+    override fun getFirstUser(): UserEntity? {
+        return UserEntity.all().firstOrNull()
     }
 
-    override fun noopUserUpdate(user: String) {
-        TODO("Not yet implemented")
+    override fun noopUserUpdate(user: UserEntity) {
+        transaction {
+            user.loginCount = user.loginCount
+        }
     }
 
     final override fun createDB() {

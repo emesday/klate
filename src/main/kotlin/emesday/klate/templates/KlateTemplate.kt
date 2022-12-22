@@ -2,13 +2,13 @@ package emesday.klate.templates
 
 import emesday.klate.*
 import emesday.klate.exceptions.*
-import emesday.klate.security.*
+import emesday.klate.form.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
 import kotlinx.html.*
 
-interface KlateTemplate: Template<HTML> {
+interface KlateTemplate : Template<HTML> {
 
     fun template(ctx: KlateContext, outer: HTML) {}
 
@@ -27,6 +27,13 @@ fun <TOuter> TOuter.insert(
     meta: String = "",
     defaultContent: TOuter.(Placeholder<TOuter>) -> Unit,
 ): Unit = insert(placeholder.apply { invoke(meta, defaultContent) })
+
+fun FlowOrInteractiveOrPhrasingContent.render(
+    renerable: Field,
+    block: INPUT.() -> Unit = {},
+) {
+    renerable.render(this, block)
+}
 
 class Menu {
     val extraClasses = ""
@@ -59,7 +66,7 @@ class KlateContext {
 suspend fun <TTemplate : KlateTemplate> ApplicationCall.respondKlateTemplate(
     template: TTemplate,
     status: HttpStatusCode = HttpStatusCode.OK,
-    body: TTemplate.() -> Unit = {}
+    body: TTemplate.() -> Unit = {},
 ) {
     template.body()
     val ctx = klate.createContext()

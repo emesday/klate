@@ -7,7 +7,11 @@ import io.ktor.server.application.*
  * Abstract SecurityManager class, declares all methods used by the
  * framework. There is no assumptions about security models or auth types.
  */
-abstract class AbstractSecurityManager(application: Application) : BaseManager(application) {
+abstract class AbstractSecurityManager<
+        USER : User<*>,
+        >(
+    application: Application,
+) : BaseManager(application) {
 
     /**
      * Adds a permission on a view menu to the backend
@@ -42,9 +46,9 @@ abstract class AbstractSecurityManager(application: Application) : BaseManager(a
 
     abstract fun securityCleanup(baseviews: String, menus: String)
 
-    abstract fun getFirstUser()
+    abstract fun getFirstUser(): USER?
 
-    abstract fun noopUserUpdate(user: String)
+    abstract fun noopUserUpdate(user: USER)
 
 
 }

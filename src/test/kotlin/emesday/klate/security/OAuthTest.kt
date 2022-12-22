@@ -200,7 +200,8 @@ class OAuthTest {
             // validate - user was given the correct roles
             transaction {
                 assertContentEquals(
-                    listOf("Admin", "Public", "User").mapNotNull { klate.securityManager.findRole(it) }.sortedBy { it.name },
+                    listOf("Admin", "Public", "User").mapNotNull { klate.securityManager.findRole(it) }
+                        .sortedBy { it.name },
                     user.roles.toSet().sortedBy { it.name },
                 )
             }
@@ -245,7 +246,8 @@ class OAuthTest {
             // validate - user was given the correct roles
             transaction {
                 assertContentEquals(
-                    listOf("Admin", "Public", "User").mapNotNull { klate.securityManager.findRole(it) }.sortedBy { it.name },
+                    listOf("Admin", "Public", "User").mapNotNull { klate.securityManager.findRole(it) }
+                        .sortedBy { it.name },
                     user.roles.toSet().sortedBy { it.name },
                 )
             }

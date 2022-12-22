@@ -10,12 +10,12 @@ interface ViewMenu {
     var name: String
 }
 
-interface PermissionView <out PERMISSION : Permission, out VIEW_MENU : ViewMenu> {
+interface PermissionView<out PERMISSION : Permission, out VIEW_MENU : ViewMenu> {
     val permission: PERMISSION
     val viewMenu: VIEW_MENU
 }
 
-interface Role <out PERMISSION_VIEW: PermissionView<Permission, ViewMenu>> {
+interface Role<out PERMISSION_VIEW : PermissionView<Permission, ViewMenu>> {
     var name: String
     val permissions: Iterable<PERMISSION_VIEW>
 
@@ -24,7 +24,7 @@ interface Role <out PERMISSION_VIEW: PermissionView<Permission, ViewMenu>> {
     }
 }
 
-interface User <out ROLE : Role<PermissionView<Permission, ViewMenu>>> {
+interface User<out ROLE : Role<PermissionView<Permission, ViewMenu>>> {
 
     var firstName: String
 
@@ -33,6 +33,8 @@ interface User <out ROLE : Role<PermissionView<Permission, ViewMenu>>> {
     var username: String
 
     var email: String
+
+    var password: String?
 
     var loginCount: Int
 
