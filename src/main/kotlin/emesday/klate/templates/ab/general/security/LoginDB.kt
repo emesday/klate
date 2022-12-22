@@ -25,7 +25,6 @@ class LoginDB(val form: LoginForm) : Base() {
                             style = "padding-top: 30px;"
                             form(action = "", classes = "form", method = FormMethod.post) {
                                 name = "login"
-                                form.hiddenTag(this)
                                 div("help-block") {
                                     ctx.i18n("Enter your login and password below")
                                 }

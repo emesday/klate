@@ -12,9 +12,11 @@ open class IndexView : KlateView() {
 
     open fun createIndexTemplate(): KlateTemplate = Index()
 
-    fun index() = routing {
+    val index = routing {
         get {
             call.respondKlateTemplate(createIndexTemplate())
         }
     }
+
+    override val routingModules: List<Route.() -> Unit> = listOf(index)
 }

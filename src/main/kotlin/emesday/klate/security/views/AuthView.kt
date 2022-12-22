@@ -20,7 +20,7 @@ abstract class AuthView : KlateView() {
 
     abstract suspend fun PipelineContext<Unit, ApplicationCall>.loginView()
 
-    fun initializeSession() = application {
+    val initializeSession = application {
         install(Sessions) {
             cookie<UserSession>("user_session") {
                 cookie.path = "/"
@@ -44,7 +44,7 @@ abstract class AuthView : KlateView() {
         }
     }
 
-    fun route() = routing {
+    val route = routing {
         get("/login/") {
             loginView()
         }
@@ -70,6 +70,10 @@ abstract class AuthView : KlateView() {
             call.respondRedirect("/login")
         }
     }
+
+    override val applicationModules: List<Application.() -> Unit> = listOf(initializeSession)
+
+    override val routingModules: List<Route.() -> Unit> = listOf(route)
 }
 
 class AuthDBView : AuthView() {
@@ -82,7 +86,7 @@ class AuthDBView : AuthView() {
         }
     }
 
-    fun auth() = application {
+    val auth = application {
         authentication {
             form("auth-form") {
                 userParamName = form.username.name
@@ -100,4 +104,6 @@ class AuthDBView : AuthView() {
             }
         }
     }
+
+    override val applicationModules: List<Application.() -> Unit> = super.applicationModules + listOf(auth)
 }
