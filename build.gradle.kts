@@ -46,7 +46,9 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
     implementation("io.ktor:ktor-server-sessions:$ktor_version")
     implementation("io.ktor:ktor-server-html-builder:$ktor_version")
-    implementation("com.password4j:password4j:$password4j_version")
+    implementation("com.password4j:password4j:$password4j_version") {
+        exclude("org.slf4j")
+    }
 
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
