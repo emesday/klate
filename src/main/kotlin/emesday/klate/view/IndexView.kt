@@ -5,6 +5,12 @@ import emesday.klate.templates.*
 import emesday.klate.templates.ab.*
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
+
+fun ApplicationCall.updateRedirect() {
+//    val pageHistory = sessions.get("page_history")?.let { it as? List<*> } ?: emptyList<Any>()
+}
+
 
 open class IndexView : KlateView() {
 
@@ -14,6 +20,7 @@ open class IndexView : KlateView() {
 
     val index = routing {
         get {
+            call.updateRedirect()
             call.respondKlateTemplate(createIndexTemplate())
         }
     }

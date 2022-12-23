@@ -3,6 +3,7 @@ package emesday.klate.templates
 import emesday.klate.*
 import emesday.klate.exceptions.*
 import emesday.klate.form.*
+import emesday.klate.security.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
@@ -35,12 +36,40 @@ fun FlowOrInteractiveOrPhrasingContent.render(
     renerable.render(this, block)
 }
 
+class MenuItem {
+
+    val url: String = ""
+    val name: String = ""
+    val label: String = ""
+    val icon: String? = null
+    val visible: Boolean = true
+
+    val children: List<MenuItem>? = null
+}
+
 class Menu {
     val extraClasses = ""
+    val list = emptyList<MenuItem>()
+}
+
+class CurrentUser {
+    val anonymous: Boolean = false
+}
+
+class Language {
+    val flag = ""
+    val name = ""
 }
 
 class KlateContext {
 
+    val languages: Map<String, Language> = emptyMap()
+    val session: Map<String, Any> = emptyMap()
+    val logoutUrl: String = ""
+    val userInfoUrl: String = ""
+    val user: UserInfo = UserInfo()
+    val loginUrl: String = ""
+    val currentUser = CurrentUser()
     val registerUserUrl: String = ""
 
     val klate: KlatePluginInstance? = null
@@ -53,6 +82,7 @@ class KlateContext {
     }
 
     fun getFlashedMessagesWithCategory(): List<Pair<String?, String>>? = null
+    fun urlForLocale(lang: String): String = ""
 
     val appTheme: String? = null
 

@@ -57,4 +57,6 @@ data class UserInfo(
     val lastName: String? = null,
     val email: String? = null,
     val roleKeys: List<String>? = null,
-)
+) {
+    val fullName: String = ""
+}
