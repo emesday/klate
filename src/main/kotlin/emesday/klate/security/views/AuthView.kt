@@ -71,9 +71,9 @@ abstract class AuthView : KlateView() {
         }
     }
 
-    override val applicationModules: List<Application.() -> Unit> = listOf(initializeSession)
+    override val applicationModules = listOf(initializeSession)
 
-    override val routingModules: List<Route.() -> Unit> = listOf(route)
+    override val routingModules = listOf(route)
 }
 
 class AuthDBView : AuthView() {
@@ -105,5 +105,5 @@ class AuthDBView : AuthView() {
         }
     }
 
-    override val applicationModules: List<Application.() -> Unit> = super.applicationModules + listOf(auth)
+    override val applicationModules = super.applicationModules + listOf(auth)
 }
