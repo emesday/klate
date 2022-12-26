@@ -11,7 +11,8 @@ import io.ktor.server.testing.*
 import kotlin.test.*
 
 class CustomIndexView : IndexView() {
-    override fun createIndexTemplate(): KlateTemplate = CustomIndex()
+
+    override val indexTemplate = template { CustomIndex() }
 }
 
 class CustomIndexViewTest {

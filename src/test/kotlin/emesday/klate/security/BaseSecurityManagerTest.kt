@@ -15,6 +15,7 @@ data class MockUser(
     override var lastName: String = "",
     override var username: String = "",
     override var email: String = "",
+    override var password: String? = null,
 ) : User<Role<*>>
 
 class BaseSecurityManagerTest {

@@ -18,13 +18,27 @@ class KlatePluginInstance(
             out Permission,
             out ViewMenu,
             out PermissionView<Permission, ViewMenu>>,
-    val indexView: KlateView,
+    val indexView: BaseView,
     val config: KlateApplicationConfig,
 ) {
 
-    val baseViews: MutableList<KlateView> = mutableListOf(AuthDBView())
+    val baseViews: MutableList<BaseView> = mutableListOf(AuthDBView())
 
-    fun createContext(): KlateContext = KlateContext()
+    fun createContext(model: Map<String, Any> = emptyMap()): KlateContext = KlateContext(model)
+
+    fun addView(
+        view: () -> BaseView,
+        name: String,
+        href: String = "",
+        icon: String = "",
+        label: String = "",
+        category: String = "",
+        categoryIcon: String = "",
+        categoryLabel: String = "",
+        menuCond: (() -> Boolean)? = null
+    ) {
+
+    }
 }
 
 val klatePluginInstanceKey = AttributeKey<KlatePluginInstance>("KlatePluginInstance")

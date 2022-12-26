@@ -12,16 +12,16 @@ fun ApplicationCall.updateRedirect() {
 }
 
 
-open class IndexView : KlateView() {
+open class IndexView : BaseView() {
 
     override var defaultView: String = "index"
 
-    open fun createIndexTemplate(): KlateTemplate = Index()
+    open val indexTemplate = template { Index() }
 
     val index = routing {
         get {
             call.updateRedirect()
-            call.respondKlateTemplate(createIndexTemplate())
+            call.respondKlateTemplate(indexTemplate)
         }
     }
 

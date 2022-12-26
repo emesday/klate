@@ -1,6 +1,7 @@
 package emesday.klate
 
 import emesday.klate.config.*
+import emesday.klate.menu.*
 import emesday.klate.security.*
 import emesday.klate.security.defaults.*
 import emesday.klate.view.*
@@ -26,11 +27,11 @@ class KlateConfig {
             return field
         }
 
-    var indexView: KlateView? = null
+    var indexView: BaseView? = null
         get() {
             field = field ?: with(application) {
                 ac.klate.app.indexView?.let {
-                    Class.forName(it).kotlin.createInstance() as KlateView
+                    Class.forName(it).kotlin.createInstance() as BaseView
                 } ?: IndexView()
             }
             return field
@@ -38,4 +39,6 @@ class KlateConfig {
 
     var templateBasePackagePath: String? = null
         get() = field ?: application.ac.klate.app.templateBasePackagePath ?: "templates"
+
+    var menu: Menu? = null
 }

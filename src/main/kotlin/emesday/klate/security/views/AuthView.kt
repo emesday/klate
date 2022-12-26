@@ -12,7 +12,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.util.pipeline.*
 
-abstract class AuthView : KlateView() {
+abstract class AuthView : BaseView() {
 
     open val invalidLoginMessage: String = "Invalid login. Please try again."
 
@@ -81,7 +81,7 @@ class AuthDBView : AuthView() {
     val form = LoginForm
 
     override suspend fun PipelineContext<Unit, ApplicationCall>.loginView() {
-        return call.respondKlateTemplate(LoginDB(form)) {
+        return call.respondKlateTemplate({ LoginDB(form) }) {
             title = this@AuthDBView.title
         }
     }

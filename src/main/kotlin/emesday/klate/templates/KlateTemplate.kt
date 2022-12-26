@@ -61,7 +61,7 @@ class Language {
     val name = ""
 }
 
-class KlateContext {
+class KlateContext(val model: Map<String, Any> = emptyMap()) {
 
     val languages: Map<String, Language> = emptyMap()
     val session: Map<String, Any> = emptyMap()
@@ -94,14 +94,16 @@ class KlateContext {
 }
 
 suspend fun <TTemplate : KlateTemplate> ApplicationCall.respondKlateTemplate(
-    template: TTemplate,
+    createTemplate: ApplicationCall.() -> TTemplate,
+    model: Map<String, Any> = emptyMap(),
     status: HttpStatusCode = HttpStatusCode.OK,
-    body: TTemplate.() -> Unit = {},
+    build: TTemplate.() -> Unit = {},
 ) {
-    template.body()
-    val ctx = klate.createContext()
+    val t = createTemplate(this)
+    t.build()
+    val ctx = klate.createContext(model)
     respondHtml(status) {
-        with(template) {
+        with(t) {
             apply(ctx)
             template(ctx, this@respondHtml)
         }
